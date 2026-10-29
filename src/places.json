@@ -1,0 +1,1357 @@
+{
+"Source": "UEX Corp API (api.uexcorp.uk/2.0: space_stations, outposts, cities, poi) snapshot 2026-10-28",
+"Places": [
+{
+"Name": "ARC-L1 Wide Forest Station",
+"Full": "ARC-L1 Wide Forest Station",
+"Short": "ARC-L1",
+"System": "Stanton",
+"Body": "ArcCorp",
+"Kind": "Station"
+},
+{
+"Name": "ARC-L2 Lively Pathway Station",
+"Full": "ARC-L2 Lively Pathway Station",
+"Short": "ARC-L2",
+"System": "Stanton",
+"Body": "ArcCorp",
+"Kind": "Station"
+},
+{
+"Name": "ARC-L3 Modern Express Station",
+"Full": "ARC-L3 Modern Express Station",
+"Short": "ARC-L3",
+"System": "Stanton",
+"Body": "ArcCorp",
+"Kind": "Station"
+},
+{
+"Name": "ARC-L4 Faint Glen Station",
+"Full": "ARC-L4 Faint Glen Station",
+"Short": "ARC-L4",
+"System": "Stanton",
+"Body": "ArcCorp",
+"Kind": "Station"
+},
+{
+"Name": "ARC-L5 Yellow Core Station",
+"Full": "ARC-L5 Yellow Core Station",
+"Short": "ARC-L5",
+"System": "Stanton",
+"Body": "ArcCorp",
+"Kind": "Station"
+},
+{
+"Name": "Baijini Point",
+"Full": "Baijini Point",
+"Short": "",
+"System": "Stanton",
+"Body": "ArcCorp",
+"Kind": "Station"
+},
+{
+"Name": "CRU-L1 Ambitious Dream Station",
+"Full": "CRU-L1 Ambitious Dream Station",
+"Short": "CRU-L1",
+"System": "Stanton",
+"Body": "Crusader",
+"Kind": "Station"
+},
+{
+"Name": "CRU-L4 Shallow Fields Station",
+"Full": "CRU-L4 Shallow Fields Station",
+"Short": "CRU-L4",
+"System": "Stanton",
+"Body": "Crusader",
+"Kind": "Station"
+},
+{
+"Name": "CRU-L5 Beautiful Glen Station",
+"Full": "CRU-L5 Beautiful Glen Station",
+"Short": "CRU-L5",
+"System": "Stanton",
+"Body": "Crusader",
+"Kind": "Station"
+},
+{
+"Name": "Everus Harbor",
+"Full": "Everus Harbor",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Station"
+},
+{
+"Name": "Grim HEX",
+"Full": "Green Imperial Housing Exchange",
+"Short": "",
+"System": "Stanton",
+"Body": "Yela",
+"Kind": "Station"
+},
+{
+"Name": "HUR-L1 Green Glade Station",
+"Full": "HUR-L1 Green Glade Station",
+"Short": "HUR-L1",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Station"
+},
+{
+"Name": "HUR-L2 Faithful Dream Station",
+"Full": "HUR-L2 Faithful Dream Station",
+"Short": "HUR-L2",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Station"
+},
+{
+"Name": "HUR-L3 Thundering Express Station",
+"Full": "HUR-L3 Thundering Express Station",
+"Short": "HUR-L3",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Station"
+},
+{
+"Name": "HUR-L4 Melodic Fields Station",
+"Full": "HUR-L4 Melodic Fields Station",
+"Short": "HUR-L4",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Station"
+},
+{
+"Name": "HUR-L5 High Course Station",
+"Full": "HUR-L5 High Course Station",
+"Short": "HUR-L5",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Station"
+},
+{
+"Name": "MIC-L1 Shallow Frontier Station",
+"Full": "MIC-L1 Shallow Frontier Station",
+"Short": "MIC-L1",
+"System": "Stanton",
+"Body": "microTech",
+"Kind": "Station"
+},
+{
+"Name": "MIC-L2 Long Forest Station",
+"Full": "MIC-L2 Long Forest Station",
+"Short": "MIC-L2",
+"System": "Stanton",
+"Body": "microTech",
+"Kind": "Station"
+},
+{
+"Name": "MIC-L3 Endless Odyssey Station",
+"Full": "MIC-L3 Endless Odyssey Station",
+"Short": "MIC-L3",
+"System": "Stanton",
+"Body": "microTech",
+"Kind": "Station"
+},
+{
+"Name": "MIC-L4 Red Crossroads Station",
+"Full": "MIC-L4 Red Crossroads Station",
+"Short": "MIC-L4",
+"System": "Stanton",
+"Body": "microTech",
+"Kind": "Station"
+},
+{
+"Name": "MIC-L5 Modern Icarus Station",
+"Full": "MIC-L5 Modern Icarus Station",
+"Short": "MIC-L5",
+"System": "Stanton",
+"Body": "microTech",
+"Kind": "Station"
+},
+{
+"Name": "Port Tressler",
+"Full": "Port Tressler",
+"Short": "",
+"System": "Stanton",
+"Body": "MicroTech",
+"Kind": "Station"
+},
+{
+"Name": "Pyro Gateway (Stanton)",
+"Full": "Pyro Gateway (Stanton)",
+"Short": "",
+"System": "Stanton",
+"Body": "Stanton Jump Points",
+"Kind": "Station"
+},
+{
+"Name": "Nyx Gateway (Stanton)",
+"Full": "Nyx Gateway (Stanton)",
+"Short": "",
+"System": "Stanton",
+"Body": "Stanton Jump Points",
+"Kind": "Station"
+},
+{
+"Name": "Terra Gateway (Stanton)",
+"Full": "Terra Gateway (Stanton)",
+"Short": "",
+"System": "Stanton",
+"Body": "Stanton Jump Points",
+"Kind": "Station"
+},
+{
+"Name": "Seraphim Station",
+"Full": "Seraphim Station",
+"Short": "",
+"System": "Stanton",
+"Body": "Crusader",
+"Kind": "Station"
+},
+{
+"Name": "PYAM-FARSTAT-1-2",
+"Full": "PYAM-FARSTAT-1-2",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro I",
+"Kind": "Station"
+},
+{
+"Name": "PYAM-FARSTAT-1-3",
+"Full": "PYAM-FARSTAT-1-3",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro I",
+"Kind": "Station"
+},
+{
+"Name": "PYAM-FARSTAT-1-5",
+"Full": "PYAM-FARSTAT-1-5",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro I",
+"Kind": "Station"
+},
+{
+"Name": "Checkmate Station",
+"Full": "Checkmate Station",
+"Short": "",
+"System": "Pyro",
+"Body": "Monox",
+"Kind": "Station"
+},
+{
+"Name": "Orbituary",
+"Full": "Orbituary",
+"Short": "",
+"System": "Pyro",
+"Body": "Bloom",
+"Kind": "Station"
+},
+{
+"Name": "Starlight Service Station",
+"Full": "Starlight Service Station",
+"Short": "",
+"System": "Pyro",
+"Body": "Bloom",
+"Kind": "Station"
+},
+{
+"Name": "Patch City",
+"Full": "Patch City",
+"Short": "",
+"System": "Pyro",
+"Body": "Bloom",
+"Kind": "Station"
+},
+{
+"Name": "PYAM-FARSTAT-3-5",
+"Full": "PYAM-FARSTAT-3-5",
+"Short": "",
+"System": "Pyro",
+"Body": "Bloom",
+"Kind": "Station"
+},
+{
+"Name": "PYAM-FARSTAT-5-1",
+"Full": "PYAM-FARSTAT-5-1",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro V",
+"Kind": "Station"
+},
+{
+"Name": "PYAM-FARSTAT-5-3",
+"Full": "PYAM-FARSTAT-5-3",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro V",
+"Kind": "Station"
+},
+{
+"Name": "Rod's Fuel 'N Supplies",
+"Full": "Rod's Fuel 'N Supplies",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro V",
+"Kind": "Station"
+},
+{
+"Name": "Rat's Nest",
+"Full": "Rat's Nest",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro V",
+"Kind": "Station"
+},
+{
+"Name": "PYAM-FARSTAT-6-2",
+"Full": "PYAM-FARSTAT-6-2",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro VI",
+"Kind": "Station"
+},
+{
+"Name": "Endgame",
+"Full": "Endgame",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro VI",
+"Kind": "Station"
+},
+{
+"Name": "Dudley & Daughters",
+"Full": "Dudley & Daughters",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro VI",
+"Kind": "Station"
+},
+{
+"Name": "Megumi Refueling",
+"Full": "Megumi Refueling",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro VI",
+"Kind": "Station"
+},
+{
+"Name": "INS Jericho",
+"Full": "INS Jericho",
+"Short": "",
+"System": "Stanton",
+"Body": "microTech",
+"Kind": "Station"
+},
+{
+"Name": "Ruin Station",
+"Full": "Ruin Station",
+"Short": "",
+"System": "Pyro",
+"Body": "Terminus",
+"Kind": "Station"
+},
+{
+"Name": "Gaslight",
+"Full": "Gaslight",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro V",
+"Kind": "Station"
+},
+{
+"Name": "PYAM-FARSTAT-2-3",
+"Full": "PYAM-FARSTAT-2-3",
+"Short": "",
+"System": "Pyro",
+"Body": "Monox",
+"Kind": "Station"
+},
+{
+"Name": "PYAM-SUPVISR-3-4",
+"Full": "PYAM-SUPVISR-3-4",
+"Short": "",
+"System": "Pyro",
+"Body": "Bloom",
+"Kind": "Station"
+},
+{
+"Name": "PYAM-SUPVISR-3-5",
+"Full": "PYAM-SUPVISR-3-5",
+"Short": "",
+"System": "Pyro",
+"Body": "Bloom",
+"Kind": "Station"
+},
+{
+"Name": "Stanton Gateway (Pyro)",
+"Full": "Stanton Gateway (Pyro)",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro Jump Points",
+"Kind": "Station"
+},
+{
+"Name": "Nyx Gateway (Pyro)",
+"Full": "Nyx Gateway (Pyro)",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro Jump Points",
+"Kind": "Station"
+},
+{
+"Name": "Stanton Gateway (Nyx)",
+"Full": "Stanton Gateway (Nyx)",
+"Short": "",
+"System": "Nyx",
+"Body": "Nyx Jump Points",
+"Kind": "Station"
+},
+{
+"Name": "Pyro Gateway (Nyx)",
+"Full": "Pyro Gateway (Nyx)",
+"Short": "",
+"System": "Nyx",
+"Body": "Nyx Jump Points",
+"Kind": "Station"
+},
+{
+"Name": "People's Service Station Delta",
+"Full": "People's Service Station Delta",
+"Short": "",
+"System": "Nyx",
+"Body": "",
+"Kind": "Station"
+},
+{
+"Name": "People's Service Station Alpha",
+"Full": "People's Service Station Alpha",
+"Short": "",
+"System": "Nyx",
+"Body": "",
+"Kind": "Station"
+},
+{
+"Name": "People's Service Station Theta",
+"Full": "People's Service Station Theta",
+"Short": "",
+"System": "Nyx",
+"Body": "",
+"Kind": "Station"
+},
+{
+"Name": "People's Service Station Lambda",
+"Full": "People's Service Station Lambda",
+"Short": "",
+"System": "Nyx",
+"Body": "",
+"Kind": "Station"
+},
+{
+"Name": "ArcCorp Mining Area 045",
+"Full": "ArcCorp Mining Area 045",
+"Short": "",
+"System": "Stanton",
+"Body": "Wala",
+"Kind": "Outpost"
+},
+{
+"Name": "ArcCorp Mining Area 048",
+"Full": "ArcCorp Mining Area 048",
+"Short": "",
+"System": "Stanton",
+"Body": "Wala",
+"Kind": "Outpost"
+},
+{
+"Name": "ArcCorp Mining Area 056",
+"Full": "ArcCorp Mining Area 056",
+"Short": "",
+"System": "Stanton",
+"Body": "Wala",
+"Kind": "Outpost"
+},
+{
+"Name": "ArcCorp Mining Area 061",
+"Full": "ArcCorp Mining Area 061",
+"Short": "",
+"System": "Stanton",
+"Body": "Wala",
+"Kind": "Outpost"
+},
+{
+"Name": "ArcCorp Mining Area 141",
+"Full": "ArcCorp Mining Area 141",
+"Short": "",
+"System": "Stanton",
+"Body": "Daymar",
+"Kind": "Outpost"
+},
+{
+"Name": "ArcCorp Mining Area 157",
+"Full": "ArcCorp Mining Area 157",
+"Short": "",
+"System": "Stanton",
+"Body": "Yela",
+"Kind": "Outpost"
+},
+{
+"Name": "Benson Mining Outpost",
+"Full": "Benson Mining Outpost",
+"Short": "",
+"System": "Stanton",
+"Body": "Yela",
+"Kind": "Outpost"
+},
+{
+"Name": "Bountiful Harvest Hydroponics",
+"Full": "Bountiful Harvest Hydroponics",
+"Short": "",
+"System": "Stanton",
+"Body": "Daymar",
+"Kind": "Outpost"
+},
+{
+"Name": "Brio's Breaker Yard",
+"Full": "Brio's Breaker Yard",
+"Short": "",
+"System": "Stanton",
+"Body": "Daymar",
+"Kind": "Outpost"
+},
+{
+"Name": "Bud's Growery",
+"Full": "Bud's Growery",
+"Short": "",
+"System": "Stanton",
+"Body": "Euterpe",
+"Kind": "Outpost"
+},
+{
+"Name": "Deakins Research",
+"Full": "Deakins Research",
+"Short": "",
+"System": "Stanton",
+"Body": "Yela",
+"Kind": "Outpost"
+},
+{
+"Name": "Devlin Scrap & Salvage",
+"Full": "Devlin Scrap & Salvage",
+"Short": "",
+"System": "Stanton",
+"Body": "Euterpe",
+"Kind": "Outpost"
+},
+{
+"Name": "Gallete Family Farms",
+"Full": "Gallete Family Farms",
+"Short": "",
+"System": "Stanton",
+"Body": "Cellin",
+"Kind": "Outpost"
+},
+{
+"Name": "HDMS-Anderson",
+"Full": "HDMS-Anderson",
+"Short": "",
+"System": "Stanton",
+"Body": "Aberdeen",
+"Kind": "Outpost"
+},
+{
+"Name": "HDMS-Bezdek",
+"Full": "HDMS-Bezdek",
+"Short": "",
+"System": "Stanton",
+"Body": "Arial",
+"Kind": "Outpost"
+},
+{
+"Name": "HDMS-Edmond",
+"Full": "HDMS-Edmond",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Outpost"
+},
+{
+"Name": "HDMS-Hadley",
+"Full": "HDMS-Hadley",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Outpost"
+},
+{
+"Name": "HDMS-Hahn",
+"Full": "HDMS-Hahn",
+"Short": "",
+"System": "Stanton",
+"Body": "Magda",
+"Kind": "Outpost"
+},
+{
+"Name": "HDMS-Lathan",
+"Full": "HDMS-Lathan",
+"Short": "",
+"System": "Stanton",
+"Body": "Arial",
+"Kind": "Outpost"
+},
+{
+"Name": "HDMS-Norgaard",
+"Full": "HDMS-Norgaard",
+"Short": "",
+"System": "Stanton",
+"Body": "Aberdeen",
+"Kind": "Outpost"
+},
+{
+"Name": "HDMS-Oparei",
+"Full": "HDMS-Oparei",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Outpost"
+},
+{
+"Name": "HDMS-Perlman",
+"Full": "HDMS-Perlman",
+"Short": "",
+"System": "Stanton",
+"Body": "Magda",
+"Kind": "Outpost"
+},
+{
+"Name": "HDMS-Pinewood",
+"Full": "HDMS-Pinewood",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Outpost"
+},
+{
+"Name": "HDMS-Ryder",
+"Full": "HDMS-Ryder",
+"Short": "",
+"System": "Stanton",
+"Body": "Ita",
+"Kind": "Outpost"
+},
+{
+"Name": "HDMS-Stanhope",
+"Full": "HDMS-Stanhope",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Outpost"
+},
+{
+"Name": "HDMS-Thedus",
+"Full": "HDMS-Thedus",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Outpost"
+},
+{
+"Name": "HDMS-Woodruff",
+"Full": "HDMS-Woodruff",
+"Short": "",
+"System": "Stanton",
+"Body": "Ita",
+"Kind": "Outpost"
+},
+{
+"Name": "Hickes Research",
+"Full": "Hickes Research",
+"Short": "",
+"System": "Stanton",
+"Body": "Cellin",
+"Kind": "Outpost"
+},
+{
+"Name": "Humboldt Mines",
+"Full": "Humboldt Mines",
+"Short": "",
+"System": "Stanton",
+"Body": "Lyria",
+"Kind": "Outpost"
+},
+{
+"Name": "Jumptown",
+"Full": "Jumptown",
+"Short": "",
+"System": "Stanton",
+"Body": "Yela",
+"Kind": "Outpost"
+},
+{
+"Name": "Kudre Ore",
+"Full": "Kudre Ore",
+"Short": "",
+"System": "Stanton",
+"Body": "Daymar",
+"Kind": "Outpost"
+},
+{
+"Name": "Loveridge Mineral Reserve",
+"Full": "Loveridge Mineral Reserve",
+"Short": "",
+"System": "Stanton",
+"Body": "Lyria",
+"Kind": "Outpost"
+},
+{
+"Name": "NT-999-XX",
+"Full": "NT-999-XX",
+"Short": "",
+"System": "Stanton",
+"Body": "Yela",
+"Kind": "Outpost"
+},
+{
+"Name": "Nuen Waste Management",
+"Full": "Nuen Waste Management",
+"Short": "",
+"System": "Stanton",
+"Body": "Daymar",
+"Kind": "Outpost"
+},
+{
+"Name": "Outpost 54",
+"Full": "Outpost 54",
+"Short": "",
+"System": "Stanton",
+"Body": "MicroTech",
+"Kind": "Outpost"
+},
+{
+"Name": "Paradise Cove",
+"Full": "Paradise Cove",
+"Short": "",
+"System": "Stanton",
+"Body": "Wala",
+"Kind": "Outpost"
+},
+{
+"Name": "Private Property",
+"Full": "Private Property",
+"Short": "",
+"System": "Stanton",
+"Body": "Cellin",
+"Kind": "Outpost"
+},
+{
+"Name": "Raven's Roost",
+"Full": "Raven's Roost",
+"Short": "",
+"System": "Stanton",
+"Body": "MicroTech",
+"Kind": "Outpost"
+},
+{
+"Name": "Rayari Anvik Research Outpost",
+"Full": "Rayari Anvik Research Outpost",
+"Short": "",
+"System": "Stanton",
+"Body": "Calliope",
+"Kind": "Outpost"
+},
+{
+"Name": "Rayari Cantwell Research Outpost",
+"Full": "Rayari Cantwell Research Outpost",
+"Short": "",
+"System": "Stanton",
+"Body": "Clio",
+"Kind": "Outpost"
+},
+{
+"Name": "Rayari Deltana Research Outpost",
+"Full": "Rayari Deltana Research Outpost",
+"Short": "",
+"System": "Stanton",
+"Body": "MicroTech",
+"Kind": "Outpost"
+},
+{
+"Name": "Rayari Kaltag Research Outpost",
+"Full": "Rayari Kaltag Research Outpost",
+"Short": "",
+"System": "Stanton",
+"Body": "Calliope",
+"Kind": "Outpost"
+},
+{
+"Name": "Rayari McGrath Research Outpost",
+"Full": "Rayari McGrath Research Outpost",
+"Short": "",
+"System": "Stanton",
+"Body": "Clio",
+"Kind": "Outpost"
+},
+{
+"Name": "Reclamation & Disposal Orinth",
+"Full": "Reclamation & Disposal Orinth",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Outpost"
+},
+{
+"Name": "Samson & Son's Salvage Center",
+"Full": "Samson & Son's Salvage Center",
+"Short": "",
+"System": "Stanton",
+"Body": "Wala",
+"Kind": "Outpost"
+},
+{
+"Name": "Shubin Mining Facility SAL-2",
+"Full": "Shubin Mining Facility SAL-2",
+"Short": "",
+"System": "Stanton",
+"Body": "Lyria",
+"Kind": "Outpost"
+},
+{
+"Name": "Shubin Mining Facility SAL-5",
+"Full": "Shubin Mining Facility SAL-5",
+"Short": "",
+"System": "Stanton",
+"Body": "Lyria",
+"Kind": "Outpost"
+},
+{
+"Name": "Shubin Mining Facility SCD-1",
+"Full": "Shubin Mining Facility SCD-1",
+"Short": "",
+"System": "Stanton",
+"Body": "Daymar",
+"Kind": "Outpost"
+},
+{
+"Name": "Shubin Mining Facility SM0-10",
+"Full": "Shubin Mining Facility SM0-10",
+"Short": "",
+"System": "Stanton",
+"Body": "MicroTech",
+"Kind": "Outpost"
+},
+{
+"Name": "Shubin Mining Facility SM0-13",
+"Full": "Shubin Mining Facility SM0-13",
+"Short": "",
+"System": "Stanton",
+"Body": "MicroTech",
+"Kind": "Outpost"
+},
+{
+"Name": "Shubin Mining Facility SM0-18",
+"Full": "Shubin Mining Facility SM0-18",
+"Short": "",
+"System": "Stanton",
+"Body": "MicroTech",
+"Kind": "Outpost"
+},
+{
+"Name": "Shubin Mining Facility SM0-22",
+"Full": "Shubin Mining Facility SM0-22",
+"Short": "",
+"System": "Stanton",
+"Body": "MicroTech",
+"Kind": "Outpost"
+},
+{
+"Name": "Shubin Mining Facility SMCa-6",
+"Full": "Shubin Mining Facility SMCa-6",
+"Short": "",
+"System": "Stanton",
+"Body": "Calliope",
+"Kind": "Outpost"
+},
+{
+"Name": "Shubin Mining Facility SMCa-8",
+"Full": "Shubin Mining Facility SMCa-8",
+"Short": "",
+"System": "Stanton",
+"Body": "Calliope",
+"Kind": "Outpost"
+},
+{
+"Name": "Terra Mills HydroFarm",
+"Full": "Terra Mills HydroFarm",
+"Short": "",
+"System": "Stanton",
+"Body": "Cellin",
+"Kind": "Outpost"
+},
+{
+"Name": "The Necropolis",
+"Full": "The Necropolis",
+"Short": "",
+"System": "Stanton",
+"Body": "MicroTech",
+"Kind": "Outpost"
+},
+{
+"Name": "The Orphanage",
+"Full": "The Orphanage",
+"Short": "",
+"System": "Stanton",
+"Body": "Lyria",
+"Kind": "Outpost"
+},
+{
+"Name": "Tram & Myers Mining",
+"Full": "Tram & Myers Mining",
+"Short": "",
+"System": "Stanton",
+"Body": "Cellin",
+"Kind": "Outpost"
+},
+{
+"Name": "Shady Glen",
+"Full": "Shady Glen",
+"Short": "",
+"System": "Stanton",
+"Body": "Wala",
+"Kind": "Outpost"
+},
+{
+"Name": "Astor's Clearing",
+"Full": "Astor's Clearing",
+"Short": "",
+"System": "Stanton",
+"Body": "MicroTech",
+"Kind": "Outpost"
+},
+{
+"Name": "Harper's Point",
+"Full": "Harper's Point",
+"Short": "",
+"System": "Stanton",
+"Body": "MicroTech",
+"Kind": "Outpost"
+},
+{
+"Name": "Dunboro",
+"Full": "Dunboro",
+"Short": "",
+"System": "Stanton",
+"Body": "MicroTech",
+"Kind": "Outpost"
+},
+{
+"Name": "Weeping Cove",
+"Full": "Weeping Cove",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Outpost"
+},
+{
+"Name": "Maker's Point",
+"Full": "Maker's Point",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Outpost"
+},
+{
+"Name": "Rappel",
+"Full": "Rappel",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Outpost"
+},
+{
+"Name": "Picker's Field",
+"Full": "Picker's Field",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Outpost"
+},
+{
+"Name": "NT-999-XXII",
+"Full": "NT-999-XXII",
+"Short": "",
+"System": "Stanton",
+"Body": "Yela",
+"Kind": "Outpost"
+},
+{
+"Name": "Rustville",
+"Full": "Rustville",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro I",
+"Kind": "Outpost"
+},
+{
+"Name": "Jackson's Swap",
+"Full": "Jackson's Swap",
+"Short": "",
+"System": "Pyro",
+"Body": "Monox",
+"Kind": "Outpost"
+},
+{
+"Name": "Last Ditch",
+"Full": "Last Ditch",
+"Short": "",
+"System": "Pyro",
+"Body": "Monox",
+"Kind": "Outpost"
+},
+{
+"Name": "Sunset Mesa",
+"Full": "Sunset Mesa",
+"Short": "",
+"System": "Pyro",
+"Body": "Monox",
+"Kind": "Outpost"
+},
+{
+"Name": "Yang's Place",
+"Full": "Yang's Place",
+"Short": "",
+"System": "Pyro",
+"Body": "Monox",
+"Kind": "Outpost"
+},
+{
+"Name": "Bueno Ravine",
+"Full": "Bueno Ravine",
+"Short": "",
+"System": "Pyro",
+"Body": "Bloom",
+"Kind": "Outpost"
+},
+{
+"Name": "Shadowfall",
+"Full": "Shadowfall",
+"Short": "",
+"System": "Pyro",
+"Body": "Bloom",
+"Kind": "Outpost"
+},
+{
+"Name": "Shepherd's Rest",
+"Full": "Shepherd's Rest",
+"Short": "",
+"System": "Pyro",
+"Body": "Bloom",
+"Kind": "Outpost"
+},
+{
+"Name": "The Golden Riviera",
+"Full": "The Golden Riviera",
+"Short": "",
+"System": "Pyro",
+"Body": "Bloom",
+"Kind": "Outpost"
+},
+{
+"Name": "The Yard",
+"Full": "The Yard",
+"Short": "",
+"System": "Pyro",
+"Body": "Bloom",
+"Kind": "Outpost"
+},
+{
+"Name": "Zephyr",
+"Full": "Zephyr",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Outpost"
+},
+{
+"Name": "Cutter's Rig",
+"Full": "Cutter's Rig",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Outpost"
+},
+{
+"Name": "Finn's Folly",
+"Full": "Finn's Folly",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Outpost"
+},
+{
+"Name": "Ludlow",
+"Full": "Ludlow",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "Outpost"
+},
+{
+"Name": "Bloodshot Ridge",
+"Full": "Bloodshot Ridge",
+"Short": "",
+"System": "Stanton",
+"Body": "MicroTech",
+"Kind": "Outpost"
+},
+{
+"Name": "Frostbite",
+"Full": "Frostbite",
+"Short": "",
+"System": "Stanton",
+"Body": "MicroTech",
+"Kind": "Outpost"
+},
+{
+"Name": "Ghost Hollow",
+"Full": "Ghost Hollow",
+"Short": "",
+"System": "Stanton",
+"Body": "MicroTech",
+"Kind": "Outpost"
+},
+{
+"Name": "Moreland Hills",
+"Full": "Moreland Hills",
+"Short": "",
+"System": "Stanton",
+"Body": "MicroTech",
+"Kind": "Outpost"
+},
+{
+"Name": "Razor's Edge",
+"Full": "Razor's Edge",
+"Short": "",
+"System": "Stanton",
+"Body": "MicroTech",
+"Kind": "Outpost"
+},
+{
+"Name": "Sakura Sun Magnolia Workcenter",
+"Full": "Sakura Sun Magnolia Workcenter",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "DistributionCenter"
+},
+{
+"Name": "Stag's Rut",
+"Full": "Stag's Rut",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro I",
+"Kind": "Outpost"
+},
+{
+"Name": "Arid Reach",
+"Full": "Arid Reach",
+"Short": "",
+"System": "Pyro",
+"Body": "Monox",
+"Kind": "Outpost"
+},
+{
+"Name": "Ostler's Claim",
+"Full": "Ostler's Claim",
+"Short": "",
+"System": "Pyro",
+"Body": "Monox",
+"Kind": "Outpost"
+},
+{
+"Name": "Carver's Ridge",
+"Full": "Carver's Ridge",
+"Short": "",
+"System": "Pyro",
+"Body": "Bloom",
+"Kind": "Outpost"
+},
+{
+"Name": "Frigid Knot",
+"Full": "Frigid Knot",
+"Short": "",
+"System": "Pyro",
+"Body": "Bloom",
+"Kind": "Outpost"
+},
+{
+"Name": "Narena's Rest",
+"Full": "Narena's Rest",
+"Short": "",
+"System": "Pyro",
+"Body": "Bloom",
+"Kind": "Outpost"
+},
+{
+"Name": "Windfall",
+"Full": "Windfall",
+"Short": "",
+"System": "Pyro",
+"Body": "Bloom",
+"Kind": "Outpost"
+},
+{
+"Name": "Ashland",
+"Full": "Ashland",
+"Short": "",
+"System": "Pyro",
+"Body": "Ignis",
+"Kind": "Outpost"
+},
+{
+"Name": "Chawla's Beach",
+"Full": "Chawla's Beach",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro IV",
+"Kind": "Outpost"
+},
+{
+"Name": "Fallow Field",
+"Full": "Fallow Field",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro IV",
+"Kind": "Outpost"
+},
+{
+"Name": "Goner's Deal",
+"Full": "Goner's Deal",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro IV",
+"Kind": "Outpost"
+},
+{
+"Name": "Sacren's Plot",
+"Full": "Sacren's Plot",
+"Short": "",
+"System": "Pyro",
+"Body": "Pyro IV",
+"Kind": "Outpost"
+},
+{
+"Name": "Kabir's Post",
+"Full": "Kabir's Post",
+"Short": "",
+"System": "Pyro",
+"Body": "Ignis",
+"Kind": "Outpost"
+},
+{
+"Name": "Blackrock Exchange",
+"Full": "Blackrock Exchange",
+"Short": "",
+"System": "Pyro",
+"Body": "Terminus",
+"Kind": "Outpost"
+},
+{
+"Name": "Bullock's Reach",
+"Full": "Bullock's Reach",
+"Short": "",
+"System": "Pyro",
+"Body": "Terminus",
+"Kind": "Outpost"
+},
+{
+"Name": "Canard View",
+"Full": "Canard View",
+"Short": "",
+"System": "Pyro",
+"Body": "Terminus",
+"Kind": "Outpost"
+},
+{
+"Name": "Area 18",
+"Full": "Area 18",
+"Short": "",
+"System": "Stanton",
+"Body": "ArcCorp",
+"Kind": "City"
+},
+{
+"Name": "Levski",
+"Full": "Levski",
+"Short": "",
+"System": "Nyx",
+"Body": "Delamar",
+"Kind": "City"
+},
+{
+"Name": "Lorville",
+"Full": "Lorville",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "City"
+},
+{
+"Name": "New Babbage",
+"Full": "New Babbage",
+"Short": "",
+"System": "Stanton",
+"Body": "microTech",
+"Kind": "City"
+},
+{
+"Name": "Orison",
+"Full": "Orison",
+"Short": "",
+"System": "Stanton",
+"Body": "Crusader",
+"Kind": "City"
+},
+{
+"Name": "Sakura Sun Goldenrod Workcenter",
+"Full": "Sakura Sun Goldenrod Workcenter",
+"Short": "",
+"System": "Stanton",
+"Body": "microTech",
+"Kind": "DistributionCenter"
+},
+{
+"Name": "Greycat Stanton IV Production Complex-A",
+"Full": "Greycat Stanton IV Production Complex-A",
+"Short": "",
+"System": "Stanton",
+"Body": "microTech",
+"Kind": "DistributionCenter"
+},
+{
+"Name": "Microtech Logistics Depot S4LD01",
+"Full": "Microtech Logistics Depot S4LD01",
+"Short": "",
+"System": "Stanton",
+"Body": "microTech",
+"Kind": "DistributionCenter"
+},
+{
+"Name": "Microtech Logistics Depot S4LD13",
+"Full": "Microtech Logistics Depot S4LD13",
+"Short": "",
+"System": "Stanton",
+"Body": "microTech",
+"Kind": "DistributionCenter"
+},
+{
+"Name": "Covalex Distribution Center S4DC05",
+"Full": "Covalex Distribution Center S4DC05",
+"Short": "",
+"System": "Stanton",
+"Body": "microTech",
+"Kind": "DistributionCenter"
+}
+]
+}
