@@ -371,3 +371,101 @@ namespace HaulingManager
         }
     }
 }
+
+namespace HaulingManager
+{
+    // "Reward not found" prompt after a capture. Star Citizen sometimes doesn't draw the reward until you click
+    // off the contract and back on, so the player can type it here or read the contract again.
+    public class RewardForm : System.Windows.Forms.Form
+    {
+        readonly System.Windows.Forms.TextBox box = new System.Windows.Forms.TextBox();
+        public long Value;
+        public bool ReadAgain;
+
+        RewardForm(string contractTitle)
+        {
+            Text = "Reward not found";
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog; MaximizeBox = false; MinimizeBox = false; ShowInTaskbar = false;
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            ClientSize = new System.Drawing.Size(520, 250);
+            Theme.ApplyForm(this);
+            TopMost = true;
+            System.Windows.Forms.Label l = new System.Windows.Forms.Label
+            {
+                Text = "The aUEC reward for this contract couldn't be read" + (string.IsNullOrEmpty(contractTitle) ? "." : ":\r\n" + contractTitle),
+                AutoSize = false, Size = new System.Drawing.Size(490, 44), Location = new System.Drawing.Point(16, 12), Font = Theme.Semibold, AutoEllipsis = true
+            };
+            System.Windows.Forms.Label tip = new System.Windows.Forms.Label
+            {
+                Text = "Star Citizen sometimes doesn't show the reward until you click off the contract and back on. " +
+                       "Check it in mobiGlas, then type the reward here, or press Read again.",
+                AutoSize = false, Size = new System.Drawing.Size(490, 52), ForeColor = Theme.Muted, Location = new System.Drawing.Point(16, 60)
+            };
+            System.Windows.Forms.Label cur = new System.Windows.Forms.Label { Text = "aUEC", AutoSize = true, ForeColor = Theme.Muted, Location = new System.Drawing.Point(206, 128) };
+            box.Location = new System.Drawing.Point(16, 122); box.Width = 184; box.Font = new System.Drawing.Font("Segoe UI Semibold", 12f);
+            Theme.StyleInput(box); box.ForeColor = Theme.Highlight;
+            box.KeyPress += delegate(object s, System.Windows.Forms.KeyPressEventArgs e)
+            {
+                if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar) && e.KeyChar != ',') e.Handled = true;
+            };
+            System.Windows.Forms.Button ok = Theme.MakeButton("Save reward", Theme.ButtonKind.Primary, delegate { Accept(); });
+            System.Windows.Forms.Button again = Theme.MakeButton("Read again", Theme.ButtonKind.Accent, delegate { ReadAgain = true; DialogResult = System.Windows.Forms.DialogResult.Retry; });
+            System.Windows.Forms.Button skip = Theme.MakeButton("Skip", Theme.ButtonKind.Secondary, null); skip.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            ok.Location = new System.Drawing.Point(16, 200); again.Location = new System.Drawing.Point(140, 200); skip.Location = new System.Drawing.Point(440, 200);
+            Controls.Add(l); Controls.Add(tip); Controls.Add(box); Controls.Add(cur); Controls.Add(ok); Controls.Add(again); Controls.Add(skip);
+            AcceptButton = ok; CancelButton = skip;
+            Shown += delegate { Activate(); box.Focus(); };
+        }
+
+        void Accept()
+        {
+            long v;
+            string digits = new string(box.Text.Where(char.IsDigit).ToArray());
+            if (!long.TryParse(digits, out v) || v <= 0) { box.Focus(); return; }
+            Value = v;
+            DialogResult = System.Windows.Forms.DialogResult.OK;
+        }
+
+        // OK = typed a reward (Value), Retry = read the contract again, Cancel = leave it blank for now
+        public static System.Windows.Forms.DialogResult Ask(System.Windows.Forms.IWin32Window owner, string contractTitle, out long value)
+        {
+            using (RewardForm f = new RewardForm(contractTitle))
+            {
+                System.Windows.Forms.DialogResult r = f.ShowDialog(owner);
+                value = f.Value;
+                return r;
+            }
+        }
+    }
+}
+
+namespace HaulingManager
+{
+    // One-line text prompt ("Name for this theme").
+    public class TextPromptForm : System.Windows.Forms.Form
+    {
+        readonly System.Windows.Forms.TextBox box = new System.Windows.Forms.TextBox();
+        TextPromptForm(string title, string prompt, string initial)
+        {
+            Text = title;
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog; MaximizeBox = false; MinimizeBox = false; ShowInTaskbar = false;
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            ClientSize = new System.Drawing.Size(420, 140);
+            Theme.ApplyForm(this);
+            System.Windows.Forms.Label l = new System.Windows.Forms.Label { Text = prompt, AutoSize = true, Location = new System.Drawing.Point(16, 14), Font = Theme.Semibold };
+            box.Location = new System.Drawing.Point(16, 44); box.Width = 386; Theme.StyleInput(box); box.Text = initial ?? "";
+            System.Windows.Forms.Button ok = Theme.MakeButton("Save", Theme.ButtonKind.Primary, delegate { if (box.Text.Trim().Length > 0) DialogResult = System.Windows.Forms.DialogResult.OK; });
+            System.Windows.Forms.Button cancel = Theme.MakeButton("Cancel", Theme.ButtonKind.Secondary, null); cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            ok.Location = new System.Drawing.Point(230, 92); cancel.Location = new System.Drawing.Point(320, 92);
+            Controls.Add(l); Controls.Add(box); Controls.Add(ok); Controls.Add(cancel);
+            AcceptButton = ok; CancelButton = cancel;
+            Shown += delegate { box.Focus(); box.SelectAll(); };
+        }
+
+        public static string Ask(System.Windows.Forms.IWin32Window owner, string title, string prompt, string initial)
+        {
+            using (TextPromptForm f = new TextPromptForm(title, prompt, initial))
+                return f.ShowDialog(owner) == System.Windows.Forms.DialogResult.OK ? f.box.Text.Trim() : null;
+        }
+    }
+}

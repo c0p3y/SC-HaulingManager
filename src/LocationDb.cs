@@ -128,7 +128,7 @@ namespace HaulingManager
 
     public class LocationDb
     {
-        public const int CurrentDataVersion = 3;
+        public const int CurrentDataVersion = 4;
         public LocationData Data;
         readonly Dictionary<string, ResolvedLocation> cache = new Dictionary<string, ResolvedLocation>();
 
@@ -150,7 +150,7 @@ namespace HaulingManager
             if (d == null || d.Bodies == null || d.Bodies.Count == 0) { d = Defaults(); save = true; }
             if (d.Costs == null) d.Costs = new TravelCosts();
             if (d.Locations == null) d.Locations = new List<LocationHint>();
-            if (d.DataVersion < CurrentDataVersion) { Merge(d, Defaults()); save = true; }
+            if (d.DataVersion < CurrentDataVersion) { Merge(d, Defaults()); AddPlaces(d, Place.LoadBuiltIn()); save = true; }
             if (save) { try { Storage.Save("locations.json", d); } catch { } }
             return new LocationDb(d);
         }
@@ -223,21 +223,89 @@ namespace HaulingManager
             return best;
         }
 
-        // OCR slips ("Gastight", "Rustvilte"): compare the place part of the name with known places, allowing a
-        // letter or two to differ.
-        LocationHint FindHintFuzzy(string display)
+        // ---------------------------------------------------------------- fuzzy place matching (OCR slips)
+        // The place part of a location ("Petch City" in "Petch City at the L3 Lagrange of Pyro III").
+        static readonly Regex PlaceTail = new Regex(@"\s+(?:at the|at|above|on|orbiting|near|over)\s+", RegexOptions.IgnoreCase);
+        public static string HeadOf(string loc, out string tail)
         {
-            string head = Regex.Split(display, @"\s+(?:at the|above|on|orbiting|near)\s+", RegexOptions.IgnoreCase)[0].Trim().ToLowerInvariant();
-            if (head.Length < 6) return null;
-            int allow = head.Length >= 12 ? 2 : 1;
+            loc = Clean(loc ?? "");
+            Match m = PlaceTail.Match(loc);
+            if (m.Success && m.Index > 0) { tail = loc.Substring(m.Index); return loc.Substring(0, m.Index).Trim(); }
+            tail = ""; return loc;
+        }
+
+        // Letters OCR mixes up are folded together (0/O, 1/l/I/|, rn/m, vv/w) and spaces / punctuation dropped,
+        // so "HUR-LI Green G1ade" and "HUR-L1 Green Glade" compare equal.
+        public static string Skeleton(string s)
+        {
+            s = (s ?? "").ToLowerInvariant().Replace("rn", "m").Replace("vv", "w").Replace("cl", "d");
+            StringBuilder sb = new StringBuilder();
+            foreach (char ch in s)
+            {
+                char c = ch;
+                if (c == '0') c = 'o';
+                else if (c == '1' || c == 'i' || c == '|' || c == '!') c = 'l';
+                else if (c == '5') c = 's';
+                if (char.IsLetterOrDigit(c)) sb.Append(c);
+            }
+            return sb.ToString();
+        }
+
+        // Best known place for a (possibly misread) name: exact skeleton match first, then the closest one within
+        // about one wrong character in five. Returns null when nothing is close enough.
+        public LocationHint BestPlace(string name)
+        {
+            string sk = Skeleton(name);
+            if (sk.Length < 4) return null;
+            int allow = sk.Length < 6 ? 0 : Math.Max(1, sk.Length / 5);
             LocationHint best = null; int bestD = int.MaxValue;
             foreach (LocationHint h in Data.Locations)
             {
-                if (string.IsNullOrEmpty(h.Match) || h.Match.Length < 6 || Math.Abs(h.Match.Length - head.Length) > allow) continue;
-                int d = Distance(head, h.Match.ToLowerInvariant(), allow);
-                if (d <= allow && d < bestD) { bestD = d; best = h; }
+                if (string.IsNullOrEmpty(h.Match) || h.Match.Length < 4 || h.Match.EndsWith("-L", StringComparison.OrdinalIgnoreCase)) continue;
+                string hs = Skeleton(h.Match);
+                if (Math.Abs(hs.Length - sk.Length) > allow) continue;
+                int d = hs == sk ? 0 : Distance(sk, hs, allow);
+                if (d > allow) continue;
+                bool better = d < bestD || (d == bestD && best != null && string.IsNullOrEmpty(best.Name) && !string.IsNullOrEmpty(h.Name));
+                if (better) { bestD = d; best = h; }
             }
             return best;
+        }
+
+        LocationHint FindHintFuzzy(string display)
+        {
+            string tail;
+            return BestPlace(HeadOf(display, out tail));
+        }
+
+        // Fixes the place name in a contract location to the known spelling, keeping the rest
+        // ("Petch City at the L3 Lagrange of Pyro Ill" -> "Patch City at the L3 Lagrange of Pyro Ill").
+        public string Canonicalize(string loc)
+        {
+            if (string.IsNullOrWhiteSpace(loc)) return loc ?? "";
+            string tail, head = HeadOf(loc, out tail);
+            LocationHint h2 = Data.Locations.FirstOrDefault(h => string.Equals(h.Match, head, StringComparison.OrdinalIgnoreCase)) ?? BestPlace(head);
+            if (h2 == null) return Clean(loc);
+            // the place's own name ("HUR-L1" -> "HUR-L1 Green Glade Station", "Covalex ... Center" -> "... Centre")
+            string name = !string.IsNullOrEmpty(h2.Key) ? h2.Key : h2.Match;
+            return Clean(name + " " + tail);
+        }
+
+        // A place read from a contract that isn't in the catalogue gets remembered, so it shows in every list
+        // (Start at, pickup, drop-off) from then on. Returns true when something was added.
+        public bool Learn(string loc)
+        {
+            if (string.IsNullOrWhiteSpace(loc)) return false;
+            ResolvedLocation r = Resolve(loc);
+            if (r.Key.StartsWith("@")) return false;     // already a known place
+            string tail, head = HeadOf(loc, out tail);
+            if (head.Length < 4 || ContractParser.IsPlaceholderName(head)) return false;
+            if (Data.Locations.Any(h => string.Equals(h.Match, head, StringComparison.OrdinalIgnoreCase))) return false;
+            LocationHint nh = new LocationHint(head, r.Body != null ? r.Body.Name : "", r.Kind == LocKind.Unknown ? "" : r.Kind.ToString());
+            nh.Key = head; nh.Name = head;
+            Data.Locations.Add(nh);
+            cache.Clear();
+            return true;
         }
 
         static int Distance(string a, string b, int cap)
@@ -448,7 +516,7 @@ namespace HaulingManager
             if (string.IsNullOrEmpty(h.Body)) h.Body = p.Body;
             if (string.IsNullOrEmpty(h.Kind)) h.Kind = p.Kind;
             h.Key = p.Name;
-            if (listName.Length > 0) h.Name = listName;
+            h.Name = listName;          // only the place's own name is listed; other spellings just point to it
             return isNew && listName.Length > 0 ? 1 : 0;
         }
     }

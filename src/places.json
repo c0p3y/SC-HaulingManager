@@ -1,5 +1,5 @@
 {
-"Source": "UEX Corp API (api.uexcorp.uk/2.0: space_stations, outposts, cities, poi) snapshot 2026-10-28",
+"Source": "UEX Corp API snapshot 2026-10-28 (stations, outposts, cities); distribution centres and Pyro salvage yards / trading posts checked against the Star Citizen Wiki (starcitizen.tools) 2026-10-31",
 "Places": [
 {
 "Name": "ARC-L1 Wide Forest Station",
@@ -1330,28 +1330,116 @@
 "Kind": "DistributionCenter"
 },
 {
-"Name": "Microtech Logistics Depot S4LD01",
-"Full": "Microtech Logistics Depot S4LD01",
+"Name": "MicroTech Logistics Depot S4LD01",
+"Full": "MicroTech Logistics Depot S4LD01",
 "Short": "",
 "System": "Stanton",
 "Body": "microTech",
 "Kind": "DistributionCenter"
 },
 {
-"Name": "Microtech Logistics Depot S4LD13",
-"Full": "Microtech Logistics Depot S4LD13",
+"Name": "MicroTech Logistics Depot S4LD13",
+"Full": "MicroTech Logistics Depot S4LD13",
 "Short": "",
 "System": "Stanton",
 "Body": "microTech",
 "Kind": "DistributionCenter"
 },
 {
-"Name": "Covalex Distribution Center S4DC05",
+"Name": "Covalex Distribution Centre S4DC05",
 "Full": "Covalex Distribution Center S4DC05",
 "Short": "",
 "System": "Stanton",
 "Body": "microTech",
 "Kind": "DistributionCenter"
+},
+{
+"Name": "Covalex Distribution Centre S1DC06",
+"Full": "Covalex Distribution Centre S1DC06",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "DistributionCenter"
+},
+{
+"Name": "Dupree Industrial Manufacturing Facility",
+"Full": "Dupree Industrial Manufacturing Facility",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "DistributionCenter"
+},
+{
+"Name": "Greycat Stanton I Production Complex-B",
+"Full": "Greycat Stanton I Production Complex-B",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "DistributionCenter"
+},
+{
+"Name": "HDPC-Cassillo",
+"Full": "HDPC-Cassillo",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "DistributionCenter"
+},
+{
+"Name": "HDPC-Farnesway",
+"Full": "HDPC-Farnesway",
+"Short": "",
+"System": "Stanton",
+"Body": "Hurston",
+"Kind": "DistributionCenter"
+},
+{
+"Name": "Cry-Astro Processing Plant 19-02",
+"Full": "Cry-Astro Processing Plant 19-02",
+"Short": "",
+"System": "Stanton",
+"Body": "microTech",
+"Kind": "DistributionCenter"
+},
+{
+"Name": "Cry-Astro Processing Plant 34-12",
+"Full": "Cry-Astro Processing Plant 34-12",
+"Short": "",
+"System": "Stanton",
+"Body": "microTech",
+"Kind": "DistributionCenter"
+},
+{
+"Name": "Seer's Canyon",
+"Full": "Seer's Canyon",
+"Short": "",
+"System": "Pyro",
+"Body": "Vatra",
+"Kind": "Outpost"
+},
+{
+"Name": "Last Landings",
+"Full": "Last Landings",
+"Short": "",
+"System": "Pyro",
+"Body": "Terminus",
+"Kind": "Outpost"
+},
+{
+"Name": "Supply Gap",
+"Full": "Supply Gap",
+"Short": "",
+"System": "Pyro",
+"Body": "Terminus",
+"Kind": "Outpost"
+},
+{
+"Name": "Rough Landing",
+"Full": "Rough Landing",
+"Short": "",
+"System": "Pyro",
+"Body": "Terminus",
+"Kind": "Outpost"
 }
 ]
 }

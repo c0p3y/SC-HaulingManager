@@ -14,6 +14,11 @@ namespace HaulingManager
     {
         string themeName;
         Dictionary<string, string> colors;
+        Dictionary<string, string> customBuf;                                  // your unsaved "Custom" colours
+        readonly Dictionary<string, Dictionary<string, string>> saved =        // your named themes
+            new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
+        readonly List<string> itemNames = new List<string>();                  // theme name behind each list entry
+        Button deleteBtn;
         readonly List<string> cargo = new List<string>();
         bool loading;
 
@@ -34,7 +39,10 @@ namespace HaulingManager
         {
             Dock = DockStyle.Fill; AutoScroll = true; Padding = new Padding(14, 10, 14, 10);
             themeName = string.IsNullOrEmpty(s.ThemeName) ? Theme.DefaultTheme : s.ThemeName;
-            colors = Theme.Resolve(themeName, s.ThemeColors);
+            if (s.SavedThemes != null) foreach (var kv in s.SavedThemes) saved[kv.Key] = new Dictionary<string, string>(kv.Value);
+            customBuf = Theme.Resolve(Theme.CustomTheme, s.ThemeColors);
+            if (Array.IndexOf(Theme.PresetNames(), themeName) < 0 && themeName != Theme.CustomTheme && !saved.ContainsKey(themeName)) themeName = Theme.DefaultTheme;
+            colors = Theme.Resolve(themeName, s.ThemeColors, saved);
             cargo.AddRange((s.HoldColors ?? HoldPanel.DefaultColors).Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries)
                                                                     .Select(x => x.Trim().TrimStart('#').ToUpperInvariant()).Where(x => Theme.ParseHex(x) != null));
             if (cargo.Count == 0) cargo.AddRange(HoldPanel.DefaultColors.Split(','));
@@ -46,13 +54,16 @@ namespace HaulingManager
             root.Controls.Add(Heading("THEME"));
             FlowLayoutPanel pick = new FlowLayoutPanel { AutoSize = true, WrapContents = false, Margin = new Padding(0, 0, 0, 6) };
             themeBox.DropDownStyle = ComboBoxStyle.DropDownList; themeBox.Width = 240;
-            foreach (string n in Theme.PresetNames()) themeBox.Items.Add(n == Theme.DefaultTheme ? n + "  (default)" : n);
-            themeBox.Items.Add(Theme.CustomTheme);
             themeBox.SelectedIndexChanged += OnThemePicked;
-            Button reset = Theme.MakeButton("Reset colors to this theme", Theme.ButtonKind.Secondary, delegate { ResetToPreset(); });
-            pick.Controls.Add(themeBox); pick.Controls.Add(reset);
+            Button reset = Theme.MakeButton("Reset colors", Theme.ButtonKind.Secondary, delegate { ResetToPreset(); });
+            Button saveAs = Theme.MakeButton("Save as…", Theme.ButtonKind.Accent, delegate { SaveAs(); });
+            deleteBtn = Theme.MakeButton("Delete", Theme.ButtonKind.Secondary, delegate { DeleteSaved(); });
+            new ToolTip().SetToolTip(saveAs, "Save the colours below as a named theme of your own");
+            new ToolTip().SetToolTip(reset, "Put back this theme's original colours");
+            pick.Controls.Add(themeBox); pick.Controls.Add(saveAs); pick.Controls.Add(deleteBtn); pick.Controls.Add(reset);
             root.Controls.Add(pick);
-            root.Controls.Add(Note("Dark: Navy & Pink, Graphite & Orange, Slate Grays, Abyss Teal & Coral.  Light: Daylight Blue, Paper Mint.  Theme changes apply when the app restarts (it offers to do that when you save)."));
+            root.Controls.Add(Note("Dark: Navy & Pink, Graphite & Orange, Slate Grays, Abyss Teal & Coral.  Light: Daylight Blue, Paper Mint.  ★ = your saved themes; changes to a saved theme are kept in it. " +
+                                   "Custom keeps your unsaved colours even if you switch away. Theme changes apply when the app restarts (it offers to do that when you save)."));
             preview.Height = 150; preview.Dock = DockStyle.Fill; preview.Margin = new Padding(0, 6, 0, 10);
             preview.Paint += PaintPreview;
             typeof(Panel).InvokeMember("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, preview, new object[] { true });
@@ -60,7 +71,7 @@ namespace HaulingManager
 
             // ---- custom colours
             root.Controls.Add(Heading("CUSTOM COLORS"));
-            root.Controls.Add(Note("Click a swatch to pick a colour, or type a hex value (e.g. FF7AC6). Changing any colour switches the theme to Custom."));
+            root.Controls.Add(Note("Click a swatch to pick a colour, or type a hex value (e.g. FF7AC6). Changing a colour of a built-in theme switches to Custom; changing one of your saved themes updates that theme."));
             TableLayoutPanel grid = new TableLayoutPanel { AutoSize = true, ColumnCount = 2, Dock = DockStyle.Fill, Margin = new Padding(0, 4, 0, 10) };
             grid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
             grid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
@@ -97,10 +108,7 @@ namespace HaulingManager
             Controls.Add(root);
             Theme.ApplyControls(this);
 
-            loading = true;
-            int idx = Array.IndexOf(Theme.PresetNames(), themeName);
-            themeBox.SelectedIndex = idx >= 0 ? idx : themeBox.Items.Count - 1;
-            loading = false;
+            FillThemeList(themeName);
             RefreshSwatches();
             RefreshCargo(0);
         }
@@ -109,7 +117,8 @@ namespace HaulingManager
         public void Commit(AppSettings s)
         {
             s.ThemeName = themeName;
-            s.ThemeColors = themeName == Theme.CustomTheme ? new Dictionary<string, string>(colors) : null;
+            s.ThemeColors = new Dictionary<string, string>(customBuf);
+            s.SavedThemes = saved.ToDictionary(kv => kv.Key, kv => new Dictionary<string, string>(kv.Value));
             s.HoldColors = string.Join(",", cargo.ToArray());
         }
 
@@ -159,35 +168,82 @@ namespace HaulingManager
         }
 
         // ---------------------------------------------------------------- theme events
+        bool IsSaved(string name) { return name != null && saved.ContainsKey(name); }
+
+        void FillThemeList(string select)
+        {
+            loading = true;
+            themeBox.Items.Clear(); itemNames.Clear();
+            foreach (string n in Theme.PresetNames()) { themeBox.Items.Add(n == Theme.DefaultTheme ? n + "  (default)" : n); itemNames.Add(n); }
+            foreach (string n in saved.Keys.OrderBy(x => x, StringComparer.OrdinalIgnoreCase)) { themeBox.Items.Add("★ " + n); itemNames.Add(n); }
+            themeBox.Items.Add(Theme.CustomTheme + "  (unsaved)"); itemNames.Add(Theme.CustomTheme);
+            int i = itemNames.FindIndex(x => string.Equals(x, select, StringComparison.OrdinalIgnoreCase));
+            themeBox.SelectedIndex = i >= 0 ? i : 0;
+            loading = false;
+            deleteBtn.Enabled = IsSaved(themeName);
+        }
+
         void OnThemePicked(object sender, EventArgs e)
         {
-            if (loading) return;
-            string[] names = Theme.PresetNames();
-            if (themeBox.SelectedIndex < names.Length)
-            {
-                themeName = names[themeBox.SelectedIndex];
-                colors = Theme.Preset(themeName);
-            }
-            else themeName = Theme.CustomTheme;    // keep the colours as they are, now editable
+            if (loading || themeBox.SelectedIndex < 0) return;
+            themeName = itemNames[themeBox.SelectedIndex];
+            if (IsSaved(themeName)) colors = Theme.Resolve(themeName, null, saved);
+            else if (themeName == Theme.CustomTheme) colors = new Dictionary<string, string>(customBuf);
+            else colors = Theme.Preset(themeName);
+            deleteBtn.Enabled = IsSaved(themeName);
             RefreshSwatches();
         }
 
         void ResetToPreset()
         {
-            string basis = themeName == Theme.CustomTheme ? Theme.DefaultTheme : themeName;
-            colors = Theme.Preset(basis);
-            loading = true;
-            themeName = basis; themeBox.SelectedIndex = Array.IndexOf(Theme.PresetNames(), basis);
-            loading = false;
+            if (IsSaved(themeName) || themeName == Theme.CustomTheme)
+            {
+                if (MessageBox.Show(FindForm(), "Reset " + (IsSaved(themeName) ? "\"" + themeName + "\"" : "Custom") + " to the default theme's colours?", "Reset colors", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
+                colors = Theme.Preset(Theme.DefaultTheme);
+                if (IsSaved(themeName)) saved[themeName] = new Dictionary<string, string>(colors); else customBuf = new Dictionary<string, string>(colors);
+            }
+            else colors = Theme.Preset(themeName);
+            RefreshSwatches();
+        }
+
+        void SaveAs()
+        {
+            string suggest = IsSaved(themeName) ? themeName + " 2" : "My theme";
+            string name = TextPromptForm.Ask(FindForm(), "Save theme", "Name for this colour theme:", suggest);
+            if (string.IsNullOrEmpty(name)) return;
+            name = name.Trim().TrimStart('★').Trim();
+            if (Array.IndexOf(Theme.PresetNames(), name) >= 0 || string.Equals(name, Theme.CustomTheme, StringComparison.OrdinalIgnoreCase))
+            {
+                MessageBox.Show(FindForm(), "That name is used by a built-in theme. Pick another name.", "Save theme");
+                return;
+            }
+            if (IsSaved(name) && !string.Equals(name, themeName, StringComparison.OrdinalIgnoreCase) &&
+                MessageBox.Show(FindForm(), "Replace your theme \"" + name + "\"?", "Save theme", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
+            saved[name] = new Dictionary<string, string>(colors);
+            themeName = saved.Keys.First(k => string.Equals(k, name, StringComparison.OrdinalIgnoreCase));
+            FillThemeList(themeName);
+        }
+
+        void DeleteSaved()
+        {
+            if (!IsSaved(themeName)) return;
+            if (MessageBox.Show(FindForm(), "Delete your theme \"" + themeName + "\"?", "Delete theme", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
+            saved.Remove(themeName);
+            themeName = Theme.DefaultTheme;
+            colors = Theme.Preset(themeName);
+            FillThemeList(themeName);
             RefreshSwatches();
         }
 
         void SetRole(string id, Color c)
         {
             colors[id] = Theme.ToHex(c);
-            if (themeName != Theme.CustomTheme)
+            if (IsSaved(themeName)) saved[themeName][id] = Theme.ToHex(c);          // your theme: keep the change in it
+            else
             {
-                loading = true; themeName = Theme.CustomTheme; themeBox.SelectedIndex = themeBox.Items.Count - 1; loading = false;
+                if (themeName != Theme.CustomTheme) customBuf = new Dictionary<string, string>(colors);   // built-in -> Custom, starting from it
+                else customBuf[id] = Theme.ToHex(c);
+                if (themeName != Theme.CustomTheme) { themeName = Theme.CustomTheme; FillThemeList(themeName); }
             }
             RefreshSwatches();
         }

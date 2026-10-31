@@ -92,6 +92,14 @@ namespace HaulingManager
         // A preset by name, or "Custom": the default preset with your saved colours on top.
         public static Dictionary<string, string> Resolve(string name, Dictionary<string, string> custom)
         {
+            return Resolve(name, custom, null);
+        }
+
+        // A preset, "Custom" (your unsaved colours), or one of your saved themes by name.
+        public static Dictionary<string, string> Resolve(string name, Dictionary<string, string> custom, Dictionary<string, Dictionary<string, string>> saved)
+        {
+            Dictionary<string, string> mine;
+            if (saved != null && name != null && saved.TryGetValue(name, out mine)) { name = CustomTheme; custom = mine; }
             if (name != CustomTheme) return Preset(name);
             Dictionary<string, string> d = Preset(DefaultTheme);
             if (custom != null) foreach (KeyValuePair<string, string> kv in custom) if (d.ContainsKey(kv.Key) && ParseHex(kv.Value) != null) d[kv.Key] = kv.Value;
@@ -253,6 +261,7 @@ namespace HaulingManager
             g.ColumnHeadersDefaultCellStyle.Font = SectionFont;
             g.ColumnHeadersDefaultCellStyle.SelectionBackColor = Header;
             g.ColumnHeadersDefaultCellStyle.Padding = new Padding(4, 0, 4, 0);
+            g.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
             g.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             g.ColumnHeadersHeight = 30;
             g.RowHeadersDefaultCellStyle.BackColor = Header;
@@ -263,6 +272,7 @@ namespace HaulingManager
             g.DefaultCellStyle.SelectionForeColor = Text;
             g.DefaultCellStyle.Font = Base;
             g.DefaultCellStyle.Padding = new Padding(4, 0, 4, 0);
+            g.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
             g.AlternatingRowsDefaultCellStyle.BackColor = AltRow;
             g.RowTemplate.Height = 26;
             g.AllowUserToResizeRows = false;
@@ -294,7 +304,8 @@ namespace HaulingManager
             DataGridViewTextBoxColumn c = new DataGridViewTextBoxColumn();
             c.Name = name; c.HeaderText = header; c.FillWeight = weight; c.MinimumWidth = minWidth;
             c.SortMode = DataGridViewColumnSortMode.NotSortable;
-            if (right) c.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            c.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;     // everything left-aligned (numbers too)
+            c.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleLeft;
             g.Columns.Add(c);
             return c;
         }

@@ -12,7 +12,7 @@ namespace HaulingManager
         public AppSettings Settings;
         int hkKey, hkMods;
         readonly TextBox hotkeyBox = new TextBox();
-        readonly ComboBox layoutBox = new ComboBox(), hotkeyMethod = new ComboBox(), captureMethod = new ComboBox(), ocrMode = new ComboBox(), after = new ComboBox(), delay = new ComboBox();
+        readonly CheckBox resetPanels = new CheckBox(); readonly ComboBox hotkeyMethod = new ComboBox(), captureMethod = new ComboBox(), ocrMode = new ComboBox(), after = new ComboBox(), delay = new ComboBox();
         readonly TextBox processName = new TextBox();
         readonly NumericUpDown upscale = new NumericUpDown();
         readonly CheckBox useRegion = new CheckBox(), saveDebug = new CheckBox(), beep = new CheckBox(), onTop = new CheckBox(), dcOutpost = new CheckBox(), askBoxes = new CheckBox();
@@ -128,10 +128,8 @@ namespace HaulingManager
             askBoxes.Text = "Ask for the containers when I tick a PICK UP in the route"; askBoxes.AutoSize = true; askBoxes.Checked = Settings.AskContainersOnPickup;
             Add(t, "Containers", askBoxes, null);
 
-            layoutBox.DropDownStyle = ComboBoxStyle.DropDownList; layoutBox.Width = 300;
-            layoutBox.Items.AddRange(new object[] { "Aligned grid - bigger cargo hold (default)", "Classic (v0.7.1)" });
-            layoutBox.SelectedIndex = Clamp(Settings.LayoutMode, 1);
-            Add(t, "Window layout", layoutBox, "Applies after a restart (offered when you save). In the aligned grid, drag the lines between the panels to resize - the app remembers them.");
+            resetPanels.Text = "Reset the panels to four equal quarters when I save"; resetPanels.AutoSize = true;
+            Add(t, "Window layout", resetPanels, "Drag a panel's title bar to move it (a shadow shows where it lands), drag the gaps to resize, use – / ✕ on a panel to minimize or close it, and Panels ▾ at the top to bring it back.");
 
             beep.Text = "Play a sound on capture"; beep.AutoSize = true; beep.Checked = Settings.Beep;
             Add(t, "", beep, null);
@@ -237,7 +235,7 @@ namespace HaulingManager
             Settings.OverlayHotkeyKey = ovKey[0]; Settings.OverlayHotkeyMods = ovKey[1];
             Settings.OverlayOpacity = (int)ovOpacity.Value;
             Settings.OverlayClickThrough = ovClick.Checked;
-            if (layoutBox.SelectedIndex != Settings.LayoutMode) { Settings.LayoutMode = layoutBox.SelectedIndex; Settings.LayoutColumn = 0; Settings.LayoutRow = 0; }
+            if (resetPanels.Checked) { Settings.DockLayout = ""; Settings.DockHidden = ""; }
             DialogResult = DialogResult.OK;
         }
     }

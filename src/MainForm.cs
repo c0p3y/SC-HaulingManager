@@ -14,7 +14,7 @@ namespace HaulingManager
     public class MainForm : Form
     {
         public const string AppName = "SC Hauling Manager";
-        public const string Version = "0.9.0";
+        public const string Version = "0.10.0";
         const int HotkeyId = 0xC0B3;
 
         AppSettings settings;
@@ -45,12 +45,16 @@ namespace HaulingManager
         readonly Label outpostBanner = new Label();
         readonly Label gameStatus = new Label(), hotkeyStatus = new Label(), messageStatus = new Label();
         Button outpostButton, delayButton, adminButton;
-        readonly Timer gameTimer = new Timer(), pollTimer = new Timer(), countdownTimer = new Timer();
+        readonly Timer gameTimer = new Timer(), pollTimer = new Timer(), countdownTimer = new Timer(), sessionTimer = new Timer();
+        SessionStore sessions;
+        readonly Label sessionLabel = new Label();
+        Button sessionPause;
+        SessionForm sessionForm;
 
         public MainForm()
         {
             settings = Storage.Load<AppSettings>("settings.json");
-            Theme.Apply(Theme.Resolve(settings.ThemeName ?? Theme.DefaultTheme, settings.ThemeColors));
+            Theme.Apply(Theme.Resolve(settings.ThemeName ?? Theme.DefaultTheme, settings.ThemeColors, settings.SavedThemes));
             if (settings.LayoutVersion < 2) { settings.LayoutColumn = 0.5; settings.LayoutRow = 0.5; settings.LayoutVersion = 2; }   // v0.8.1: four equal panels
             data = Storage.Load<AppData>("contracts.json");
             if (data.Contracts == null) data.Contracts = new List<Contract>();
@@ -64,6 +68,8 @@ namespace HaulingManager
             hold.SetShip(ShipDb.Find(settings.ShipName));
             RepairContracts();
             Renumber();
+            sessions = Storage.Load<SessionStore>(Sessions.File);
+            if (sessions.Past == null) sessions.Past = new List<WorkSession>();
             // route history that no longer matches what's loaded (older versions didn't correct it after hand edits)
             foreach (Contract c in data.Contracts)
                 for (int li = 0; li < c.Legs.Count; li++)
@@ -88,6 +94,10 @@ namespace HaulingManager
             gameTimer.Interval = 2000; gameTimer.Tick += delegate { UpdateGameStatus(); }; gameTimer.Start();
             pollTimer.Interval = 30; pollTimer.Tick += OnPollTick;
             countdownTimer.Interval = 1000; countdownTimer.Tick += OnCountdownTick;
+            sessionTimer.Interval = 1000; sessionTimer.Tick += delegate { UpdateSessionBar(); }; sessionTimer.Start();
+            ResumeAfterRestart();
+            SaveAll();
+            UpdateSessionBar();
 
             RefreshAll();
             UpdateGameStatus();
@@ -104,6 +114,7 @@ namespace HaulingManager
             FormClosing += delegate
             {
                 if (overlay != null && !overlay.IsDisposed) { settings.OverlayOn = overlay.Visible; }
+                if (sessions.Current != null && sessions.Current.Running) Sessions.Pause(sessions.Current, ClosedNote);
                 SaveAll(); UnregisterHotkey(); if (keyHook != null) keyHook.Dispose();
                 foreach (StepHotkey h in stepKeys) { if (h.Hook != null) h.Hook.Dispose(); if (h.Registered) NativeMethods.UnregisterHotKey(Handle, h.Id); }
                 if (overlay != null && !overlay.IsDisposed) overlay.Dispose();
@@ -127,6 +138,13 @@ namespace HaulingManager
             overlayButton = Theme.MakeButton("Overlay", Theme.ButtonKind.Secondary, delegate { ToggleOverlay(); });
             new ToolTip().SetToolTip(overlayButton, "In-game route overlay: shows your route steps over Star Citizen (Borderless / Windowed).\r\nDrag it to move, drag an edge to resize. Hotkeys in Settings tick off steps without leaving the game.");
             actions.Controls.Add(overlayButton);
+            Button sessionBtn = Theme.MakeButton("Session", Theme.ButtonKind.Secondary, delegate { ShowSessions(); });
+            new ToolTip().SetToolTip(sessionBtn, "Session timer + income log: time, legs, aUEC earned, aUEC per hour and more.");
+            actions.Controls.Add(sessionBtn);
+            Button panelsBtn = null;
+            panelsBtn = Theme.MakeButton("Panels ▾", Theme.ButtonKind.Secondary, delegate { ShowPanelsMenu(panelsBtn); });
+            new ToolTip().SetToolTip(panelsBtn, "Show or hide the four panels, or reset the layout.\r\nDrag a panel's title bar to move it - a shadow shows where it will land.");
+            actions.Controls.Add(panelsBtn);
             actions.Controls.Add(Theme.MakeButton("Add Manually", Theme.ButtonKind.Secondary, delegate { AddManual(); }));
             actions.Controls.Add(Theme.MakeButton("Last Capture", Theme.ButtonKind.Secondary, delegate { ShowLastCapture(); }));
             actions.Controls.Add(Theme.MakeButton("Select Region", Theme.ButtonKind.Secondary, delegate { SelectRegion(); }));
@@ -144,7 +162,17 @@ namespace HaulingManager
             messageStatus.Dock = DockStyle.Fill; messageStatus.ForeColor = Theme.Muted; messageStatus.TextAlign = ContentAlignment.MiddleLeft; messageStatus.AutoEllipsis = true;
             adminButton = Theme.MakeButton("Restart as Admin", Theme.ButtonKind.Warning, delegate { RestartAsAdmin(); });
             adminButton.Dock = DockStyle.Right; adminButton.Visible = false; adminButton.Margin = new Padding(0); adminButton.Padding = new Padding(8, 0, 8, 0);
-            status.Controls.Add(messageStatus); status.Controls.Add(hotkeyStatus); status.Controls.Add(gameStatus); status.Controls.Add(adminButton);
+            FlowLayoutPanel sess = new FlowLayoutPanel { Dock = DockStyle.Right, AutoSize = true, WrapContents = false, Padding = new Padding(0, 1, 4, 0) };
+            sessionLabel.AutoSize = true; sessionLabel.Font = Theme.Semibold; sessionLabel.ForeColor = Theme.Muted; sessionLabel.Cursor = Cursors.Hand;
+            sessionLabel.Padding = new Padding(0, 6, 6, 0); sessionLabel.UseMnemonic = false;
+            sessionLabel.Click += delegate { ShowSessions(); };
+            new ToolTip().SetToolTip(sessionLabel, "Session timer - click for the summary");
+            sessionPause = new Button { Text = "Pause", AutoSize = true, Height = 24, FlatStyle = FlatStyle.Flat, TabStop = false, Cursor = Cursors.Hand, Margin = new Padding(0, 2, 0, 0) };
+            sessionPause.FlatAppearance.BorderSize = 0; sessionPause.BackColor = Theme.Surface; sessionPause.ForeColor = Theme.Highlight; sessionPause.Font = Theme.Semibold;
+            sessionPause.Click += delegate { ToggleSessionPause(); };
+            new ToolTip().SetToolTip(sessionPause, "Pause / resume the session timer (paused time doesn't count toward aUEC per hour)");
+            sess.Controls.Add(sessionLabel); sess.Controls.Add(sessionPause);
+            status.Controls.Add(messageStatus); status.Controls.Add(hotkeyStatus); status.Controls.Add(gameStatus); status.Controls.Add(sess); status.Controls.Add(adminButton);
 
             // ---- contracts card
             Panel cBody; Label cTitle;
@@ -295,109 +323,46 @@ namespace HaulingManager
             holdPanel.Undeliver = id => { StepRecord r = data.Journal.FirstOrDefault(x => x.Id == id); if (r != null) UndoRecord(r); };
             holdPanel.Changed += delegate { SaveHold(); };
             holdPanel.Status = t => messageStatus.Text = t;
-            holdPanel.ExpandClicked += delegate { if (toggleHoldExpand != null) toggleHoldExpand(); };
+            holdPanel.ExpandClicked += delegate { dock.ToggleMaximize("hold"); };
             hBody.Controls.Add(holdPanel);
 
-            Panel content = new Panel { Dock = DockStyle.Fill, Padding = new Padding(6, 6, 6, 4) };
-            if (settings.LayoutMode == 1) BuildClassicLayout(content, cCard, lCard, rCard, hCard);
-            else BuildGridLayout(content, cCard, lCard, rCard, hCard);
+            Panel content = new Panel { Dock = DockStyle.Fill, Padding = new Padding(8, 8, 8, 4) };
+            dock = new DockHost();
+            foreach (Control card in new Control[] { cCard, lCard, rCard, hCard }) card.Padding = new Padding(0);
+            dock.Add("contracts", "Accepted Contracts", cCard, cTitle);
+            dock.Add("route", "Route Plan", rCard, rTitle);
+            dock.Add("cargo", "Cargo to Move", lCard, lTitle);
+            dock.Add("hold", "Cargo Hold", hCard, hTitle);
+            dock.LoadLayout(settings.DockLayout, settings.DockHidden);
+            dock.LayoutChanged += delegate { settings.DockLayout = dock.SaveLayout(); settings.DockHidden = dock.SaveHidden(); SaveAll(); };
+            dock.MaximizedChanged += delegate { holdPanel.SetExpanded(dock.MaximizedId == "hold"); };
+            content.Controls.Add(dock);
             Controls.Add(content); Controls.Add(Theme.MakeAccentLine()); Controls.Add(header); Controls.Add(status);
         }
 
-        static SplitContainer Split(Orientation o)
+        DockHost dock;
+
+        // Panels ▾ : show / hide each panel, fill the window with one, or put everything back
+        void ShowPanelsMenu(Control anchor)
         {
-            return new SplitContainer { Dock = DockStyle.Fill, Orientation = o, BackColor = Theme.Bg, SplitterWidth = 6 };
+            ContextMenuStrip m = new ContextMenuStrip { ShowCheckMargin = true, ShowImageMargin = false };
+            m.Renderer = new ToolStripProfessionalRenderer(new DarkMenuColors()); m.BackColor = Theme.Header; m.ForeColor = Theme.Text;
+            foreach (string id in dock.PanelIds.ToList())
+            {
+                string pid = id;
+                ToolStripMenuItem it = new ToolStripMenuItem(dock.TitleOf(pid)) { Checked = dock.IsShown(pid) };
+                it.Click += delegate { if (dock.IsShown(pid)) dock.Hide(pid, "closed"); else dock.Show(pid); };
+                m.Items.Add(it);
+            }
+            m.Items.Add(new ToolStripSeparator());
+            ToolStripMenuItem reset = new ToolStripMenuItem("Reset layout (four equal panels)");
+            reset.Click += delegate { dock.ResetLayout(); holdPanel.SetExpanded(false); };
+            m.Items.Add(reset);
+            ToolStripMenuItem tip = new ToolStripMenuItem("Tip: drag a panel's title to move it; drag the gaps to resize") { Enabled = false };
+            m.Items.Add(tip);
+            m.Closed += delegate { BeginInvoke(new Action(() => m.Dispose())); };
+            m.Show(anchor, new Point(0, anchor.Height));
         }
-
-        // Classic (v0.7.1): two independent columns, each split top / bottom.
-        void BuildClassicLayout(Panel content, Control contracts, Control cargo, Control route, Control holdCard)
-        {
-            SplitContainer left = Split(Orientation.Horizontal), right = Split(Orientation.Horizontal), main = Split(Orientation.Vertical);
-            left.Panel1.Controls.Add(contracts); left.Panel2.Controls.Add(cargo);
-            right.Panel1.Controls.Add(route); right.Panel2.Controls.Add(holdCard);
-            main.Panel1.Controls.Add(left); main.Panel2.Controls.Add(right);
-            content.Controls.Add(main);
-            toggleHoldExpand = () =>
-            {
-                holdExpanded = !holdExpanded;
-                main.Panel1Collapsed = holdExpanded; right.Panel1Collapsed = holdExpanded;
-                holdPanel.SetExpanded(holdExpanded);
-            };
-            Load += delegate
-            {
-                main.SplitterDistance = (int)(ClientSize.Width * 0.47);
-                left.SplitterDistance = (int)(left.Height * 0.42);
-                right.SplitterDistance = (int)(right.Height * 0.47);
-            };
-        }
-
-        // Aligned grid (default): two rows that share one column line, so the four cards line up.
-        // Top: Accepted Contracts | Route Plan.  Bottom: Cargo to Move | Cargo Hold.
-        // The lines you drag are kept as proportions, so the layout looks the same at any window size.
-        void BuildGridLayout(Panel content, Control contracts, Control cargo, Control route, Control holdCard)
-        {
-            SplitContainer rows = Split(Orientation.Horizontal), top = Split(Orientation.Vertical), bottom = Split(Orientation.Vertical);
-            foreach (SplitContainer sc in new[] { rows, top, bottom }) { sc.Panel1MinSize = 120; sc.Panel2MinSize = 120; }
-            top.Panel1.Controls.Add(contracts); top.Panel2.Controls.Add(route);
-            bottom.Panel1.Controls.Add(cargo); bottom.Panel2.Controls.Add(holdCard);
-            rows.Panel1.Controls.Add(top); rows.Panel2.Controls.Add(bottom);
-            content.Controls.Add(rows);
-
-            bool applying = false, loaded = false;
-            Func<double, double> clamp = v => v > 0.15 && v < 0.85 ? v : 0.5;
-            Action apply = () =>
-            {
-                if (!loaded || applying || WindowState == FormWindowState.Minimized || rows.Height < 300 || rows.Width < 300) return;
-                applying = true;
-                try
-                {
-                    if (!rows.Panel1Collapsed && !rows.Panel2Collapsed)
-                        rows.SplitterDistance = (int)Math.Round((rows.Height - rows.SplitterWidth) * clamp(settings.LayoutRow));
-                    foreach (SplitContainer sc in new[] { top, bottom })
-                        if (!sc.Panel1Collapsed && !sc.Panel2Collapsed)
-                            sc.SplitterDistance = (int)Math.Round((sc.Width - sc.SplitterWidth) * clamp(settings.LayoutColumn));
-                }
-                catch { }
-                applying = false;
-            };
-            // only a drag by you changes the proportions; resizes and our own adjustments don't
-            bool dragCol = false, dragRow = false;
-            top.SplitterMoving += delegate { dragCol = true; };
-            bottom.SplitterMoving += delegate { dragCol = true; };
-            rows.SplitterMoving += delegate { dragRow = true; };
-            SplitterEventHandler colMoved = (s, e) =>
-            {
-                if (applying || !dragCol) return;
-                dragCol = false;
-                SplitContainer sc = (SplitContainer)s;
-                if (sc.Width > sc.SplitterWidth) settings.LayoutColumn = sc.SplitterDistance / (double)(sc.Width - sc.SplitterWidth);
-                apply();   // moves the other row's line to match
-            };
-            top.SplitterMoved += colMoved; bottom.SplitterMoved += colMoved;
-            rows.SplitterMoved += delegate
-            {
-                if (applying || !dragRow) return;
-                dragRow = false;
-                if (rows.Height > rows.SplitterWidth) settings.LayoutRow = rows.SplitterDistance / (double)(rows.Height - rows.SplitterWidth);
-            };
-            Load += delegate { loaded = true; apply(); };
-            Shown += delegate { apply(); };
-            rows.SizeChanged += delegate { apply(); };
-            Resize += delegate { apply(); };
-
-            // Expand: the cargo hold takes the whole window; press again to put everything back
-            toggleHoldExpand = () =>
-            {
-                holdExpanded = !holdExpanded;
-                rows.Panel1Collapsed = holdExpanded;
-                bottom.Panel1Collapsed = holdExpanded;
-                holdPanel.SetExpanded(holdExpanded);
-                apply();
-            };
-        }
-
-        Action toggleHoldExpand;
-        bool holdExpanded;
 
         // ================================================================ Hotkey
         void ApplyHotkey()
@@ -720,6 +685,7 @@ namespace HaulingManager
                 else
                 {
                     string summary = AddOrUpdate(c);
+                    if (c.Reward <= 0 && !RewardFor(c)) { messageStatus.Text = summary + "  -  reward not read: open the contract again in mobiGlas and press the hotkey."; return; }
                     string legsText = string.Join("\n", c.Legs.Select(l => l.Scu + " SCU " + l.Material + ":  " + Short(l.Pickup) + "  →  " + Short(l.Dropoff)).ToArray());
                     string warn = outposts.Count > 0 ? "⚠ Planetary outpost: " + string.Join(", ", outposts.ToArray()) : null;
                     if (c.Warnings.Length > 0) legsText += "\nCheck: " + c.Warnings;
@@ -878,6 +844,23 @@ namespace HaulingManager
         }
 
         // Adds a contract; if the same contract was captured before, updates its progress instead.
+        // After a capture with no reward: ask for it (or to read the contract again). Returns false for "Read again".
+        bool RewardFor(Contract c)
+        {
+            Contract target = data.Contracts.FirstOrDefault(x => ContractParser.Signature(x) == ContractParser.Signature(c) && !x.IsDone()) ?? c;
+            if (target.Reward > 0) return true;
+            ToastForm.CloseCurrent();
+            long v;
+            DialogResult r = RewardForm.Ask(this, target.Title, out v);
+            if (r == DialogResult.OK && v > 0)
+            {
+                target.Reward = v;
+                SaveAll(); RefreshContracts();
+                return true;
+            }
+            return r != DialogResult.Retry;
+        }
+
         string AddOrUpdate(Contract c)
         {
             string sig = ContractParser.Signature(c);
@@ -890,11 +873,13 @@ namespace HaulingManager
                                                          x.Scu == n.Scu && LocationDb.KeyOf(x.Dropoff) == LocationDb.KeyOf(n.Dropoff));
                     if (e != null && n.Delivered > e.Delivered) { e.Delivered = n.Delivered; e.PickedUp = Math.Max(e.PickedUp, e.Delivered); }
                 }
+                if (existing.Reward <= 0 && c.Reward > 0) existing.Reward = c.Reward;   // the reward showed up on a later read
                 SaveAll(); RefreshAll();
                 return "Already tracked: " + existing.Label() + " (progress updated)";
             }
             c.Number = data.Contracts.Count + 1;
             data.Contracts.Add(c);
+            LearnPlaces(c);
             Renumber();
             route = null;
             SaveAll(); RefreshAll();
@@ -903,7 +888,7 @@ namespace HaulingManager
 
         void AddWithReview(Contract c, string heading)
         {
-            using (ContractEditForm f = new ContractEditForm(c, heading, KnownLocations()))
+            using (ContractEditForm f = new ContractEditForm(c, heading, StartLocations()))
             {
                 if (f.ShowDialog(this) == DialogResult.OK) messageStatus.Text = AddOrUpdate(f.Result);
             }
@@ -923,12 +908,13 @@ namespace HaulingManager
         {
             Contract c = SelectedContracts().FirstOrDefault();
             if (c == null) return;
-            using (ContractEditForm f = new ContractEditForm(c, "Edit contract " + c.Label(), KnownLocations()))
+            using (ContractEditForm f = new ContractEditForm(c, "Edit contract " + c.Label(), StartLocations()))
             {
                 if (f.ShowDialog(this) != DialogResult.OK) return;
                 int i = data.Contracts.IndexOf(c);
                 f.Result.Number = c.Number;
                 data.Contracts[i] = f.Result;
+                LearnPlaces(f.Result);
                 route = null;
                 SaveAll(); RefreshAll();
             }
@@ -1594,12 +1580,27 @@ namespace HaulingManager
             if (changed) { try { Storage.Save("contracts.json", data); Storage.Save("hold.json", holdState); } catch { } }
         }
 
+        // New places from a contract are added to locations.json so every list (Start at, pickup, drop-off) has them.
+        void LearnPlaces(Contract c)
+        {
+            bool added = false;
+            foreach (CargoLeg l in c.Legs) { if (db.Learn(l.Pickup)) added = true; if (db.Learn(l.Dropoff)) added = true; }
+            if (added) { try { Storage.Save("locations.json", db.Data); } catch { } }
+        }
+
         // Older reads could split one pickup into two "pickup points" when OCR spelled it two ways
         // ("Patch City at the L3 ..." and "Petch City"). Joins those back into one line per drop-off,
         // keeping what you loaded, the containers in the hold and the route history.
         bool CollapseSamePlacePickups(Contract c)
         {
             bool changed = false;
+            // known spelling for every place (fixes OCR slips in contracts read by older versions)
+            foreach (CargoLeg l in c.Legs)
+            {
+                string p = db.Canonicalize(l.Pickup), d = db.Canonicalize(l.Dropoff);
+                if (p != l.Pickup || d != l.Dropoff) { l.Pickup = p; l.Dropoff = d; changed = true; }
+            }
+            LearnPlaces(c);
             // one spelling per place within the contract
             foreach (var g in c.Legs.SelectMany(l => new[] { l.Pickup, l.Dropoff }).Where(x => !string.IsNullOrWhiteSpace(x))
                                      .Distinct().GroupBy(x => ContractParser.PlaceKey(x)))
@@ -1959,6 +1960,14 @@ namespace HaulingManager
 
         void SaveAll()
         {
+            if (sessions != null)
+            {
+                string notice = null;
+                try { notice = Sessions.Sync(sessions, data, id => { StepRecord r = data.Journal.FirstOrDefault(x => x.Id == id); return r != null ? r.BoxIds.Count : 0; }); }
+                catch (Exception ex) { System.Diagnostics.Debug.WriteLine(ex); }
+                try { Storage.Save(Sessions.File, sessions); } catch { }
+                if (notice != null && IsHandleCreated) BeginInvoke(new Action(() => { Notify(notice, false); UpdateSessionBar(); }));
+            }
             try
             {
                 Storage.Save("settings.json", settings);
@@ -1967,6 +1976,63 @@ namespace HaulingManager
                 Storage.Save("hold.json", holdState);
             }
             catch (Exception ex) { messageStatus.Text = "Could not save: " + ex.Message; }
+        }
+
+        // ================================================================ Session timer
+        const string ClosedNote = "Paused - app closed";
+
+        // a quick restart (theme change, admin) shouldn't leave the timer paused
+        void ResumeAfterRestart()
+        {
+            WorkSession s = sessions.Current;
+            if (s == null || s.Running || !s.Paused || s.Events.Count == 0) return;
+            SessionEvent last = s.Events[s.Events.Count - 1];
+            if (last.Kind != "pause" || last.Text != ClosedNote) return;
+            if ((DateTime.Now - Sessions.Parse(last.Time)).TotalMinutes <= 3) Sessions.Resume(s, "Resumed - app reopened");
+            else messageStatus.Text = "Your session timer was paused when the app closed - press Resume at the bottom right to continue it.";
+        }
+
+        void ToggleSessionPause()
+        {
+            WorkSession s = sessions.Current;
+            if (s == null) { sessions.Current = Sessions.Start(data, "Timer started by hand"); Notify("Session timer started.", false); }
+            else if (s.Running) { Sessions.Pause(s, "Paused"); Notify("Session timer paused.", false); }
+            else { Sessions.Resume(s, "Resumed"); Notify("Session timer running.", false); }
+            SaveAll();
+            UpdateSessionBar();
+            if (sessionForm != null && !sessionForm.IsDisposed) sessionForm.RefreshAll();
+        }
+
+        void EndSession()
+        {
+            Sessions.End(sessions);
+            SaveAll();
+            UpdateSessionBar();
+        }
+
+        void ShowSessions()
+        {
+            if (sessionForm != null && !sessionForm.IsDisposed) { sessionForm.RefreshAll(); sessionForm.Activate(); return; }
+            sessionForm = new SessionForm(sessions, SaveAll, ToggleSessionPause, EndSession);
+            sessionForm.Show(this);
+        }
+
+        void UpdateSessionBar()
+        {
+            if (sessionPause == null) return;
+            WorkSession s = sessions.Current;
+            if (s == null)
+            {
+                sessionLabel.Text = "⏱ no session";
+                sessionLabel.ForeColor = Theme.Muted;
+                sessionPause.Text = "Start";
+                return;
+            }
+            SessionStats st = Sessions.Stats(s);
+            sessionLabel.Text = "⏱ " + Sessions.Clock(st.Active) + (s.Running ? "" : s.Paused ? "  PAUSED" : "  stopped") + "   ·   " +
+                                Sessions.Money(st.Earned) + " aUEC   ·   " + Sessions.Money((long)Math.Round(st.PerHour)) + " /h";
+            sessionLabel.ForeColor = s.Running ? Theme.Green : s.Paused ? Theme.Highlight : Theme.Muted;
+            sessionPause.Text = s.Running ? "Pause" : s.Paused ? "Resume" : "Start";
         }
 
         // ================================================================ Settings / about
@@ -1982,8 +2048,8 @@ namespace HaulingManager
                 s.RegionX = settings.RegionX; s.RegionY = settings.RegionY; s.RegionW = settings.RegionW; s.RegionH = settings.RegionH;
                 s.OverlayX = settings.OverlayX; s.OverlayY = settings.OverlayY; s.OverlayW = settings.OverlayW; s.OverlayH = settings.OverlayH; s.OverlayOn = settings.OverlayOn;
                 string oldTheme = ThemeKey(settings), oldCargo = settings.HoldColors ?? "";
-                int oldLayout = settings.LayoutMode;
-                if (s.LayoutMode == oldLayout) { s.LayoutColumn = settings.LayoutColumn; s.LayoutRow = settings.LayoutRow; }
+                bool resetPanels = string.IsNullOrEmpty(s.DockLayout) && !string.IsNullOrEmpty(settings.DockLayout);
+                if (!resetPanels) { s.DockLayout = settings.DockLayout; s.DockHidden = settings.DockHidden; }
                 settings = s;
                 TopMost = settings.AlwaysOnTop;
                 if ((settings.HoldColors ?? "") != oldCargo) { HoldPanel.SetColors(settings.HoldColors); RefreshHold(); holdPanel.View.Invalidate(); }
@@ -1993,9 +2059,10 @@ namespace HaulingManager
                 if (overlay != null && overlay.Visible) ShowOverlay(true);
                 UpdateGameStatus();
                 RefreshAll();
-                bool themeChanged = ThemeKey(settings) != oldTheme, layoutChanged = settings.LayoutMode != oldLayout;
-                if ((themeChanged || layoutChanged) &&
-                    MessageBox.Show(this, "Restart the app now to apply the new " + (themeChanged && layoutChanged ? "colors and layout" : themeChanged ? "colors" : "layout") + "?",
+                if (resetPanels) { dock.ResetLayout(); holdPanel.SetExpanded(false); }
+                bool themeChanged = ThemeKey(settings) != oldTheme;
+                if (themeChanged &&
+                    MessageBox.Show(this, "Restart the app now to apply the new colors?",
                                     "Settings", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     RestartApp();
             }
@@ -2029,7 +2096,7 @@ namespace HaulingManager
 
         static string ThemeKey(AppSettings s)
         {
-            Dictionary<string, string> d = Theme.Resolve(s.ThemeName ?? Theme.DefaultTheme, s.ThemeColors);
+            Dictionary<string, string> d = Theme.Resolve(s.ThemeName ?? Theme.DefaultTheme, s.ThemeColors, s.SavedThemes);
             return string.Join(",", d.OrderBy(kv => kv.Key).Select(kv => kv.Key + "=" + kv.Value).ToArray());
         }
 

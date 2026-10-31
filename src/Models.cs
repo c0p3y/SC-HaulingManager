@@ -50,6 +50,7 @@ namespace HaulingManager
         public string RawText { get; set; }
         public string Warnings { get; set; }
         public bool ManuallyCompleted { get; set; }
+        public string Uid { get; set; }              // stable id for the session log (numbers change when contracts are removed)
         public List<CargoLeg> Legs { get; set; }
 
         public Contract()
@@ -74,7 +75,7 @@ namespace HaulingManager
         {
             Contract c = new Contract();
             c.Number = Number; c.Title = Title; c.Reward = Reward; c.Added = Added; c.RawText = RawText;
-            c.Warnings = Warnings; c.ManuallyCompleted = ManuallyCompleted;
+            c.Warnings = Warnings; c.ManuallyCompleted = ManuallyCompleted; c.Uid = Uid;
             foreach (CargoLeg l in Legs) c.Legs.Add(l.Clone());
             return c;
         }
@@ -139,7 +140,10 @@ namespace HaulingManager
         public int PackMode { get; set; }           // 0 tightest fit, 1 group by cargo + destination, 2 cargo groups + gaps, 3 destination groups + gaps
         public string HoldColors { get; set; }      // destination colours for the cargo hold, in the order they're used
         public string ThemeName { get; set; }       // a preset name or "Custom"
-        public Dictionary<string, string> ThemeColors { get; set; }   // your colours when ThemeName is "Custom" (role id -> hex)
+        public Dictionary<string, string> ThemeColors { get; set; }   // your unsaved "Custom" colours (role id -> hex), kept even while another theme is in use
+        public Dictionary<string, Dictionary<string, string>> SavedThemes { get; set; }   // your named colour themes
+        public string DockLayout { get; set; }      // v0.10 panel arrangement, e.g. "V(0.5,H(0.5,contracts,route),H(0.5,cargo,hold))"
+        public string DockHidden { get; set; }      // minimized / closed panels and where they go back
         public int LayoutMode { get; set; }         // 0 aligned grid (default), 1 classic (v0.7.1)
         public double LayoutColumn { get; set; }    // aligned grid: where the column line sits (fraction of the width)
         public double LayoutRow { get; set; }       // aligned grid: where the row line sits (fraction of the height)

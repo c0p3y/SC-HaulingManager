@@ -153,6 +153,11 @@ namespace HaulingManager
             // ("Freight elevator at Gaslight at the L2 Lagrange of Pyro V").
             foreach (ParsedObjective o in r.Pickups.Concat(r.Deliveries)) o.Location = Expand(o.Location, flat);
 
+            // Fuzzy best match against every known place, so a few misread letters still give the right place
+            // ("Petch City" -> "Patch City", "HDPC-Casillo" -> "HDPC-Cassillo").
+            if (Places != null)
+                foreach (ParsedObjective o in r.Pickups.Concat(r.Deliveries)) o.Location = Places.Canonicalize(o.Location);
+
             // One name per place: "Petch City" (OCR slip) and "Patch City at the L3 Lagrange of Pyro III" are the same
             // pickup, so they all take the longest spelling seen in this contract.
             List<ParsedObjective> all = r.Pickups.Concat(r.Deliveries).ToList();
@@ -276,6 +281,7 @@ namespace HaulingManager
 
         static bool Same(string a, string b) { return LocationDb.KeyOf(a) == LocationDb.KeyOf(b); }
         static bool IsPlaceholder(string loc) { return PlaceholderRx.IsMatch(LocationDb.KeyOf(loc)); }
+        public static bool IsPlaceholderName(string loc) { return IsPlaceholder(loc); }
 
         static void BuildLegs(ParseResult r)
         {

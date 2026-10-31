@@ -14,8 +14,9 @@ A portable Windows companion app for Star Citizen hauling. It reads accepted hau
 - **3D cargo hold**: 110 ships with their real cargo grids (including angled bays), drag-and-drop crates, an off-grid area, and four packing modes (tightest fit, grouped by cargo / destination, optional 1 SCU gaps).
 - **In-game overlay**: a semi-transparent, always-on-top route list; hotkeys to complete or undo the current step and to show or hide the overlay.
 - **Locations**: every station, Lagrange station, city, outpost and distribution centre, updatable from the UEX Corp API.
-- **Themes**: six built-in themes (four dark, two light), fully custom colours and cargo colour order.
-- **Flexible layout**: an aligned four-panel grid with proportions that persist, plus an Expand mode for the 3D hold.
+- **Session timer & income log**: starts with your first contract, pause for breaks, and a summary with aUEC earned, aUEC per hour, leg times, boxes / SCU delivered, max cargo aboard and earlier sessions (CSV export).
+- **Themes**: six built-in themes (four dark, two light), named custom colour themes and cargo colour order.
+- **Dockable panels**: drag panels anywhere with a live preview, resize, minimize, close or fill the window; the layout is remembered.
 
 ## Requirements
 - Windows 10 or 11 with .NET Framework 4.8 (built into Windows).
@@ -50,6 +51,8 @@ Windows SmartScreen may warn because the exe is unsigned. You can always build i
 | `src/ShipDb.cs`, `src/ships.json` | Ships and cargo grid geometry |
 | `src/places.json` | Built-in location catalogue (UEX snapshot) |
 | `src/OverlayForm.cs` | In-game route overlay |
+| `src/DockHost.cs` | Dockable panel layout (drag, drop preview, minimize / close) |
+| `src/Session.cs`, `src/SessionForm.cs` | Session timer, income log and summary window |
 | `src/Theme.cs`, `src/ThemeEditor.cs` | Themes, styling helpers, Colors & Themes settings page |
 | `src/SettingsForm.cs`, `src/ContainerForm.cs`, `src/ContractEditForm.cs`, `src/SmallForms.cs` | Dialogs |
 | `src/Models.cs`, `src/Storage.cs`, `src/Native.cs` | Data models, JSON storage, Win32 interop (hotkeys, dark title bar) |

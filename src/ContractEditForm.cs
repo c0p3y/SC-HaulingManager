@@ -27,14 +27,17 @@ namespace HaulingManager
 
             TableLayoutPanel top = new TableLayoutPanel();
             top.Dock = DockStyle.Top; top.Height = 70; top.ColumnCount = 4; top.Padding = new Padding(8, 8, 8, 0);
-            top.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 60));
+            // label columns size to their text (a fixed width wrapped "Reward" onto two lines at some DPI settings)
+            top.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
             top.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70));
-            top.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 60));
+            top.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
             top.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30));
-            top.Controls.Add(new Label { Text = "Title", AutoSize = true, Padding = new Padding(0, 6, 0, 0) });
+            top.Controls.Add(new Label { Text = "Title", AutoSize = true, Padding = new Padding(0, 6, 6, 0), Margin = new Padding(3, 3, 6, 3) });
             title.Dock = DockStyle.Fill; top.Controls.Add(title);
-            top.Controls.Add(new Label { Text = "Reward", AutoSize = true, Padding = new Padding(0, 6, 0, 0) });
+            top.Controls.Add(new Label { Text = "Reward (aUEC)", AutoSize = true, Padding = new Padding(0, 6, 6, 0), Margin = new Padding(12, 3, 6, 3) });
             reward.Dock = DockStyle.Fill; top.Controls.Add(reward);
+            reward.TextChanged += delegate { MarkReward(); };
+            Shown += delegate { MarkReward(); };
             warnings.AutoSize = false; warnings.Dock = DockStyle.Fill; warnings.ForeColor = Theme.Highlight; warnings.Font = Theme.Small;
             top.Controls.Add(warnings); top.SetColumnSpan(warnings, 4);
 
@@ -107,6 +110,7 @@ namespace HaulingManager
 
             title.Text = working.Title;
             reward.Text = working.Reward > 0 ? working.Reward.ToString("N0") : "";
+            MarkReward();
             raw.Text = working.RawText ?? "";
             warnings.Text = string.IsNullOrEmpty(working.Warnings) ? "" : "Check: " + working.Warnings;
             FillGrid(working.Legs);
@@ -147,6 +151,7 @@ namespace HaulingManager
             }
             if (p.Title.Length > 0) title.Text = p.Title;
             if (p.Reward > 0) reward.Text = p.Reward.ToString("N0");
+            MarkReward();
             FillGrid(p.Legs);
             warnings.Text = p.Warnings.Count > 0 ? "Check: " + string.Join(" | ", p.Warnings.ToArray()) : "";
         }
@@ -159,6 +164,14 @@ namespace HaulingManager
         }
 
         static string Str(object v) { return v == null ? "" : LocationDb.Clean(v.ToString()); }
+
+        // an empty reward is highlighted so it gets noticed
+        void MarkReward()
+        {
+            bool empty = ToInt(reward.Text) <= 0;
+            reward.BackColor = empty ? Theme.Mix(Theme.Surface, Theme.Highlight, 0.25f) : Theme.Surface;
+            new ToolTip().SetToolTip(reward, empty ? "Reward not read - check the contract in game (click off it and back on if it's blank) and type it here." : "");
+        }
 
         void OnOk(object sender, EventArgs e)
         {
@@ -196,6 +209,13 @@ namespace HaulingManager
                 MessageBox.Show(this, "Heads up: " + string.Join(", ", problems.Distinct().ToArray()) + ".\r\nThose lines will be skipped by the route planner until fixed.\r\n\r\nSave anyway?",
                                 "Incomplete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
 
+            if (ToInt(reward.Text) <= 0 && legs.Count > 0 &&
+                MessageBox.Show(this, "No reward entered.\r\n\r\nStar Citizen sometimes doesn't show the reward until you click off the contract and back on. " +
+                                      "Do you want to enter the reward now?", "Reward", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                reward.Focus(); reward.SelectAll();
+                return;
+            }
             working.Title = title.Text.Trim().Length > 0 ? title.Text.Trim() : "Hauling Contract";
             working.Reward = ToInt(reward.Text);
             working.RawText = raw.Text;

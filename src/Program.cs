@@ -22,7 +22,7 @@ namespace HaulingManager
             try
             {
                 AppSettings st = Storage.Load<AppSettings>("settings.json");
-                Theme.Apply(Theme.Resolve(st.ThemeName ?? Theme.DefaultTheme, st.ThemeColors));
+                Theme.Apply(Theme.Resolve(st.ThemeName ?? Theme.DefaultTheme, st.ThemeColors, st.SavedThemes));
             }
             catch { }
 

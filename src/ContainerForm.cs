@@ -36,10 +36,10 @@ namespace HaulingManager
             int y = 84;
             foreach (int size in Boxes.Sizes)
             {
-                Label l = new Label { Text = size + " SCU", AutoSize = false, Width = 70, Height = 28, TextAlign = ContentAlignment.MiddleRight, Location = new Point(16, y), ForeColor = Theme.Accent, Font = Theme.Semibold };
+                Label l = new Label { Text = size + " SCU", AutoSize = false, Width = 70, Height = 28, TextAlign = ContentAlignment.MiddleLeft, Location = new Point(16, y), ForeColor = Theme.Accent, Font = Theme.Semibold };
                 Button minus = Theme.MakeButton("−", Theme.ButtonKind.Secondary, null);
                 minus.AutoSize = false; minus.Size = new Size(32, 28); minus.Padding = new Padding(0); minus.Location = new Point(96, y);
-                TextBox tb = new TextBox { Width = 56, Location = new Point(134, y + 2), TextAlign = HorizontalAlignment.Center, Font = Theme.Semibold };
+                TextBox tb = new TextBox { Width = 56, Location = new Point(134, y + 2), TextAlign = HorizontalAlignment.Left, Font = Theme.Semibold };
                 Theme.StyleInput(tb);
                 int c; tb.Text = start.TryGetValue(size, out c) ? c.ToString() : "0";
                 Button plus = Theme.MakeButton("+", Theme.ButtonKind.Secondary, null);
@@ -60,7 +60,7 @@ namespace HaulingManager
             summary.AutoSize = true; summary.Location = new Point(16, y + 8); summary.Font = new Font("Segoe UI Semibold", 12f); summary.ForeColor = Theme.Highlight;
             Controls.Add(summary);
             Label orLbl = new Label { Text = "No boxes to count? Just the total:", AutoSize = true, ForeColor = Theme.Muted, Font = Theme.Small, Location = new Point(16, y + 42) };
-            totalBox.Location = new Point(220, y + 38); totalBox.Width = 70; Theme.StyleInput(totalBox); totalBox.TextAlign = HorizontalAlignment.Center;
+            totalBox.Location = new Point(220, y + 38); totalBox.Width = 70; Theme.StyleInput(totalBox); totalBox.TextAlign = HorizontalAlignment.Left;
             totalBox.Text = initialTotal > 0 ? initialTotal.ToString() : "";
             totalBox.KeyPress += delegate(object o, KeyPressEventArgs e) { if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar)) e.Handled = true; };
             totalBox.TextChanged += delegate
