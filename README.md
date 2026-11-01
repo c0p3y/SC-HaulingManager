@@ -7,7 +7,7 @@ A portable Windows companion app for Star Citizen hauling. It reads accepted hau
 - No installer, no registry changes, no runtime downloads. One `.exe` plus a few JSON files next to it.
 - Read-only: it only takes screenshots and reads keyboard state for its hotkeys. It never touches the game's memory or files.
 
-<img src="images/SC-HaulingManager.png">
+<img src="Images/SC-HaulingManager.png">
 
 ## Features
 - **Contract capture**: a hotkey (works while the game has focus) or a countdown reads the mobiGlas contract with the Windows OCR engine. OCR slips are cleaned up and place names are fuzzy-matched.
