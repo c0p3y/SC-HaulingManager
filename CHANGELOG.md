@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.10.1
+- Major cities are listed with their spaceport (Area 18 - Riker Memorial Spaceport, Lorville - Teasa Spaceport, New Babbage - New Babbage Interstellar Spaceport, Orison - August Dunlow Spaceport). Contracts that name only the spaceport now resolve to the city, in every list and in route planning.
+
 ## 0.10.0
 - Dockable panels: drag a panel by its title to move it anywhere (live preview + drop shadow), drag the gaps to resize, minimize / close / restore any panel, double-click a title to fill the window, Panels ▾ menu and Reset layout. Replaces the fixed grid / classic layouts.
 - Session timer & income log: starts with your first contract, pause for breaks, stops when everything is delivered. Summary window with aUEC earned, aUEC per hour, active / total time, contracts taken / completed, boxes and SCU delivered, max SCU aboard, leg times, a timestamped log, earlier sessions and CSV export.

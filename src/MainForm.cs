@@ -14,7 +14,7 @@ namespace HaulingManager
     public class MainForm : Form
     {
         public const string AppName = "SC Hauling Manager";
-        public const string Version = "0.10.0";
+        public const string Version = "0.10.1";
         const int HotkeyId = 0xC0B3;
 
         AppSettings settings;
@@ -89,7 +89,7 @@ namespace HaulingManager
             TopMost = settings.AlwaysOnTop;
             capacityBox.Text = settings.ShipCapacity > 0 ? settings.ShipCapacity.ToString() : "";
             SelectShipInBox();
-            startBox.Text = settings.StartLocation ?? "";
+            startBox.Text = string.IsNullOrWhiteSpace(settings.StartLocation) ? "" : db.Canonicalize(settings.StartLocation);
 
             gameTimer.Interval = 2000; gameTimer.Tick += delegate { UpdateGameStatus(); }; gameTimer.Start();
             pollTimer.Interval = 30; pollTimer.Tick += OnPollTick;

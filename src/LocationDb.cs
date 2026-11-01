@@ -128,7 +128,7 @@ namespace HaulingManager
 
     public class LocationDb
     {
-        public const int CurrentDataVersion = 4;
+        public const int CurrentDataVersion = 5;
         public LocationData Data;
         readonly Dictionary<string, ResolvedLocation> cache = new Dictionary<string, ResolvedLocation>();
 
@@ -488,9 +488,26 @@ namespace HaulingManager
         // Every known pickup / drop-off place (from the UEX Corp location lists): each gets a hint for its full name
         // (shown in the Start at list) and, for Lagrange stations, one for its short code ("HUR-L1").
         // Older short hints ("Checkmate", "Dudley", "Area18") are tied to the same place.
+        // Major cities, listed with their spaceport: contracts often name only the spaceport.
+        // { city, spaceport, other spellings... }
+        public static readonly string[][] Spaceports =
+        {
+            new[] { "Area 18", "Riker Memorial Spaceport", "Area18" },
+            new[] { "Lorville", "Teasa Spaceport" },
+            new[] { "New Babbage", "New Babbage Interstellar Spaceport" },
+            new[] { "Orison", "August Dunlow Spaceport" },
+        };
+
+        public static string CityWithSpaceport(string[] sp) { return sp[0] + " - " + sp[1]; }
+
         public static int AddPlaces(LocationData d, List<Place> places)
         {
             int added = 0;
+            // the cities are listed as "Lorville - Teasa Spaceport"; the city name and the spaceport name both lead there
+            foreach (Place p in places)
+                foreach (string[] sp in Spaceports)
+                    if (KeyOf(p.Name) == KeyOf(sp[0]) || KeyOf(p.Full) == KeyOf(sp[0]) || KeyOf(p.Name) == KeyOf(CityWithSpaceport(sp)))
+                    { p.Name = CityWithSpaceport(sp); p.Full = sp[0]; if (string.IsNullOrEmpty(p.Kind)) p.Kind = "City"; }
             foreach (Place p in places)
             {
                 if (string.IsNullOrWhiteSpace(p.Name)) continue;
@@ -504,6 +521,24 @@ namespace HaulingManager
                 string k = KeyOf(h.Match).Replace(" ", "");
                 List<Place> hits = places.Where(p => KeyOf(p.Name).Replace(" ", "").Contains(k) && p.Kind == h.Kind).ToList();
                 if (hits.Count == 1) h.Key = hits[0].Name;
+            }
+            foreach (string[] sp in Spaceports)
+            {
+                string name = CityWithSpaceport(sp);
+                Place city = places.FirstOrDefault(p => p.Name == name);
+                if (city == null) continue;
+                foreach (string alias in sp) Upsert(d, alias, city, "");
+                // older spellings, and the spaceport if it was remembered from a contract as a place of its own
+                HashSet<string> keys = new HashSet<string>(sp.Select(KeyOf));
+                foreach (LocationHint h in d.Locations)
+                {
+                    bool mine = keys.Contains(KeyOf(h.Match)) || keys.Contains(KeyOf(h.Key)) || KeyOf(h.Match) == KeyOf(name);
+                    if (!mine) continue;
+                    h.Key = name;
+                    h.Name = KeyOf(h.Match) == KeyOf(name) ? name : "";
+                    h.Kind = "City";
+                    if (string.IsNullOrEmpty(h.Body)) h.Body = city.Body;
+                }
             }
             return added;
         }

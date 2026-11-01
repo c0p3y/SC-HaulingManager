@@ -90,6 +90,7 @@ Some contracts collect one cargo total from several pickup points without saying
 
 ## Good to know
 - The **Start at** list has every station, Lagrange station (HUR-L1 … MIC-L5 by full name, e.g. "CRU-L4 Shallow Fields Station"), city, outpost and distribution centre once, plus any other places from your contracts. Every place read from a contract is fuzzy-matched to the closest known name, so a few misread letters still give the right place ("Petch City" → Patch City, "HDPC-Casillo" → HDPC-Cassillo, "HUR-LI" → HUR-L1). Places that aren't in the catalogue yet are remembered, so the Start at list and the pickup / drop-off lists always contain the same places.
+- The major cities are listed with their spaceport: **Area 18 - Riker Memorial Spaceport**, **Lorville - Teasa Spaceport**, **New Babbage - New Babbage Interstellar Spaceport**, **Orison - August Dunlow Spaceport**. A contract that names only the city or only the spaceport goes to the same place.
 - The place list comes from UEX Corp (uexcorp.space). **Settings → Update locations (UEX)** downloads the latest list, for example after a patch adds new stations or outposts.
 - Contracts are always numbered 1, 2, 3… in list order. Removing one renumbers the rest.
 - If a contract's **reward** can't be read (Star Citizen sometimes doesn't draw it until you click off the contract and back on), the app asks you to type it or to read the contract again. A blank reward is highlighted in the edit window.
